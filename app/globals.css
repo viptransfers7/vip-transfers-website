@@ -1,0 +1,249 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --ink: #090a0b;
+  --charcoal: #151718;
+  --graphite: #2c3031;
+  --ivory: #f7f1e6;
+  --paper: #fbfaf6;
+  --fog: #ede9df;
+  --champagne: #c6a76a;
+  --bronze: #9a7b41;
+  --sage: #60746b;
+  --wine: #6f3f43;
+  --line: rgba(9, 10, 11, 0.12);
+  --line-strong: rgba(9, 10, 11, 0.18);
+  --dark-line: rgba(255, 255, 255, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+button,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+summary {
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: #c6a76a;
+  color: #090a0b;
+}
+
+.section {
+  padding: clamp(56px, 7vw, 112px) clamp(20px, 5vw, 72px);
+}
+
+.container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.eyebrow {
+  color: var(--bronze);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.serif-title {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.copy {
+  color: rgb(82 82 82);
+  line-height: 1.75;
+}
+
+.muted-label {
+  color: rgb(115 115 115);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.accent-label {
+  color: var(--bronze);
+}
+
+.surface-card {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 50px rgba(9, 10, 11, 0.08);
+}
+
+.surface-card-dark {
+  border: 1px solid var(--dark-line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 3px rgba(198, 167, 106, 0.28);
+}
+
+.hairline {
+  border-color: var(--line);
+}
+
+.dark-hairline {
+  border-color: var(--dark-line);
+}
+
+.btn {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+  padding: 0 18px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.52;
+  transform: none;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(198, 167, 106, 0.28);
+}
+
+.btn-dark {
+  border-color: #090a0b;
+  background: #090a0b;
+  color: white;
+}
+
+.btn-gold {
+  border-color: #c6a76a;
+  background: #d8c79f;
+  color: #171411;
+}
+
+.btn-light {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: white;
+}
+
+.btn-white {
+  border-color: rgba(9, 10, 11, 0.14);
+  background: white;
+  color: var(--ink);
+}
+
+.field {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(9, 10, 11, 0.16);
+  border-radius: 4px;
+  background: white;
+  padding: 10px 12px;
+  color: #111;
+  outline: none;
+}
+
+.field:focus {
+  border-color: #c6a76a;
+  box-shadow: 0 0 0 3px rgba(198, 167, 106, 0.18);
+}
+
+.field::placeholder {
+  color: rgb(115 115 115);
+}
+
+.dark-field {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.dark-field::placeholder {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+@media (max-width: 760px) {
+  .section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .eyebrow,
+  .muted-label {
+    letter-spacing: 0.12em;
+  }
+}

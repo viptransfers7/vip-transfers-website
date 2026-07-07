@@ -1,0 +1,75 @@
+import type { PlaceSnapshot, QuoteResponse, ServiceType, VehicleTypeCode } from "@/lib/pricing/types";
+
+export type GuestDetails = {
+  bookerName: string;
+  bookerEmail: string;
+  bookerPhone: string;
+  bookingForSomeoneElse: boolean;
+  guestName: string;
+  guestPhone: string;
+  signboardName: string;
+  specialRequest: string;
+};
+
+export type BookingPayload = {
+  reservationNo?: string;
+  companyConfirmationNo?: string;
+  brand: "VIP Transfers Korea";
+  source: "Website";
+  serviceType: ServiceType;
+  pickupDate: string;
+  pickupTime: string;
+  pickupLocation: string;
+  dropoffLocation: string;
+  pickupPlace?: PlaceSnapshot;
+  dropoffPlace?: PlaceSnapshot;
+  pickupRegion?: string;
+  dropoffRegion?: string;
+  stopover?: string;
+  airport?: string;
+  airportDirection?: "arrival" | "departure";
+  flightNumber?: string;
+  isRoundTrip?: boolean;
+  returnPickupLocation?: string;
+  returnDropoffLocation?: string;
+  returnPickupPlace?: PlaceSnapshot;
+  returnDropoffPlace?: PlaceSnapshot;
+  returnDate?: string;
+  returnTime?: string;
+  returnFlight?: string;
+  hourlyDuration?: 5 | 10 | 12;
+  itineraryNote?: string;
+  tourProductSlug?: string;
+  tourProductName?: string;
+  passengers: number;
+  luggage: number;
+  vehicleCode: string;
+  vehicleName: string;
+  requestedVehicleTypeCode?: VehicleTypeCode;
+  requestedVehicleTypeName?: string;
+  selectedVehicleOptionName?: string;
+  quoteAmountUsd: number;
+  quoteAmountKrw: number;
+  quoteBreakdown: QuoteResponse["breakdown"];
+  requiresCustomQuote: boolean;
+  paymentStatus: "Unbilled" | "Unpaid" | "Paid";
+  billingStatus: "Unbilled" | "Draft" | "Billed" | "Partially Paid" | "Paid" | "Overdue" | "Void";
+  status: "Pending Payment" | "Confirmed" | "Quote Requested";
+  assignmentStatus: "Unassigned";
+  paymentProvider?: "PayPal" | "Manual";
+  paymentId?: string;
+  paypalOrderId?: string;
+  customerTrackingToken?: string;
+  customerTrackingEnabled: boolean;
+  airportMeetingInstruction?: string;
+  guest: GuestDetails;
+};
+
+export type PendingBookingResponse = {
+  ok: true;
+  reservationNo: string;
+  trackingToken: string;
+  status: BookingPayload["status"];
+  paymentStatus: BookingPayload["paymentStatus"];
+  payload: BookingPayload;
+};
