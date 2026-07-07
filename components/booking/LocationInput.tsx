@@ -88,7 +88,7 @@ export function LocationInput({
   }, []);
 
   return (
-    <label className="col-span-2 grid gap-2 text-sm font-bold">
+    <label className="col-span-2 grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
       <span className="flex items-center justify-between gap-3">
         {label}
         <span className="hidden text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-400 sm:inline">{placesReady ? "Google Places" : "Suggested places"}</span>

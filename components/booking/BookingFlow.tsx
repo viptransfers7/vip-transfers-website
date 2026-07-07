@@ -256,24 +256,24 @@ export function BookingFlow() {
   const finalActionLabel = submitting ? "Processing..." : selectedQuote?.requiresCustomQuote ? "Submit quote request" : "Continue to payment";
 
   return (
-    <div className="border hairline bg-white shadow-soft">
+    <div className="overflow-hidden border hairline bg-white shadow-soft">
       <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} />
-      <section className="p-4 md:p-6 lg:p-8">
-        {error ? <div className="mb-5 border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</div> : null}
+      <section className="p-3 sm:p-4 md:p-6 lg:p-8">
+        {error ? <div className="mb-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}
         {step === 0 ? (
-          <div className="grid gap-5">
+          <div className="grid gap-4 md:gap-5">
             <ServiceStep serviceType={serviceType} setServiceType={setServiceType} />
             <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
           </div>
         ) : null}
         {step === 1 ? <VehicleStep selectedVehicleCode={vehicleCode} setSelectedVehicleCode={setVehicleCode} quotes={quotes} loading={quoteLoading} /> : null}
         {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
-        <div className="sticky bottom-0 -mx-4 mt-8 flex items-center justify-between gap-3 border-t hairline bg-white/95 px-4 py-4 backdrop-blur md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
+        <div className="sticky bottom-0 -mx-3 mt-6 flex items-center justify-between gap-3 border-t hairline bg-white/95 px-3 py-3 backdrop-blur sm:-mx-4 sm:px-4 md:-mx-6 md:mt-8 md:px-6 lg:-mx-8 lg:px-8">
           <div className="hidden min-w-0 text-sm md:block">
             <div className="truncate font-bold">{selectedVehicle.vehicleName}</div>
             <div className="text-xs text-neutral-500">{selectedQuote?.available ? `$${selectedQuote.finalPrice} instant quote` : selectedQuote?.requiresCustomQuote ? "Custom quote" : "Quote pending"}</div>
           </div>
-          <div className="ml-auto flex gap-3">
+          <div className="ml-auto flex gap-2.5 md:gap-3">
             <button type="button" className="btn" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>
               Back
             </button>

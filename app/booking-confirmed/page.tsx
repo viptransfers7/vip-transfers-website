@@ -39,10 +39,10 @@ export default function BookingConfirmedPage({
       <section className="section bg-ink text-white">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-champagne text-4xl text-champagne">✓</div>
-            <div className="eyebrow mt-8">{isQuote ? "Quote Request Received" : "Payment Complete"}</div>
-            <h1 className="serif-title mt-5 text-4xl leading-[1] sm:text-5xl md:text-7xl">{isQuote ? "Your itinerary is in review." : "Your booking is ready for dispatch review."}</h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/70">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-champagne text-3xl text-champagne md:h-20 md:w-20 md:text-4xl">✓</div>
+            <div className="eyebrow mt-6 md:mt-8">{isQuote ? "Quote Request Received" : "Payment Complete"}</div>
+            <h1 className="serif-title mt-4 text-[2rem] leading-[1.04] sm:text-4xl md:mt-5 md:text-6xl">{isQuote ? "Your itinerary is in review." : "Your booking is ready for dispatch review."}</h1>
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-white/70 md:mt-6 md:text-base md:leading-7">
               {isQuote
                 ? "No payment has been collected for this custom quote request. The team will confirm availability and pricing before you are asked to pay."
                 : "Your payment was completed. Chauffeur and vehicle assignment details are shared after dispatch confirms the customer-facing trip information."}
@@ -52,31 +52,31 @@ export default function BookingConfirmedPage({
       </section>
       <section className="section">
         <div className="container">
-          <div className="surface-card mx-auto max-w-3xl border-t-4 border-champagne p-6 md:p-10">
-            <div className="flex flex-col justify-between gap-5 border-b hairline pb-6 md:flex-row md:items-start">
+          <div className="surface-card mx-auto max-w-3xl border-t-4 border-champagne p-4 md:p-10">
+            <div className="flex flex-col justify-between gap-4 border-b hairline pb-5 md:flex-row md:items-start md:gap-5 md:pb-6">
               <div>
-                <div className="serif-title text-3xl">VIP TRANSFERS</div>
+                <div className="serif-title text-2xl md:text-3xl">VIP TRANSFERS</div>
                 <div className="mt-1 text-sm text-neutral-500">viptransferskorea.com</div>
               </div>
               <div className="md:text-right">
-                <div className="text-xs font-bold uppercase tracking-[0.16em] text-neutral-500">Booking Reference</div>
-                <div className="mt-1 text-xl font-black">{reservation}</div>
-                <span className={`mt-2 inline-flex px-3 py-2 text-xs font-black uppercase tracking-[0.12em] ${isQuote ? "bg-ivory text-[#9a7b41]" : "bg-[#e6f4ec] text-[#20664a]"}`}>
+                <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:text-xs md:tracking-[0.16em]">Booking Reference</div>
+                <div className="mt-1 text-lg font-black md:text-xl">{reservation}</div>
+                <span className={`mt-2 inline-flex px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] md:px-3 md:py-2 md:text-xs ${isQuote ? "bg-ivory text-[#9a7b41]" : "bg-[#e6f4ec] text-[#20664a]"}`}>
                   {statusLabel}
                 </span>
               </div>
             </div>
-            <div className="mt-7 grid gap-3 text-sm">
-              <div className="grid gap-2 border-b hairline py-3 md:grid-cols-[180px_1fr]">
+            <div className="mt-5 grid gap-2 text-sm md:mt-7 md:gap-3">
+              <div className="grid gap-1.5 border-b hairline py-2.5 md:grid-cols-[180px_1fr] md:gap-2 md:py-3">
                 <div className="font-bold text-neutral-500">Status</div>
                 <div>{isQuote ? "Quote requested / payment not collected" : "Payment successful / dispatch review pending"}</div>
               </div>
-              <div className="grid gap-2 border-b hairline py-3 md:grid-cols-[180px_1fr]">
+              <div className="grid gap-1.5 border-b hairline py-2.5 md:grid-cols-[180px_1fr] md:gap-2 md:py-3">
                 <div className="font-bold text-neutral-500">Amount</div>
                 <div>{isQuote ? "To be confirmed" : formatAmount(amount)}</div>
               </div>
               {token ? (
-                <div className="grid gap-2 border-b hairline py-3 md:grid-cols-[180px_1fr]">
+                <div className="grid gap-1.5 border-b hairline py-2.5 md:grid-cols-[180px_1fr] md:gap-2 md:py-3">
                   <div className="font-bold text-neutral-500">Tracking</div>
                   <Link href={`/track/${token}`} className="font-bold text-[#9a7b41]">
                     Open customer tracking page
@@ -84,18 +84,18 @@ export default function BookingConfirmedPage({
                 </div>
               ) : null}
             </div>
-            <div className="mt-7 border hairline bg-neutral-50 p-5">
-              <div className="text-sm font-black uppercase tracking-[0.14em] text-[#9a7b41]">Next steps</div>
+            <div className="mt-6 border hairline bg-neutral-50 p-4 md:mt-7 md:p-5">
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-sm">Next steps</div>
               <ul className="mt-4 grid gap-2 text-sm leading-6 text-neutral-700">
                 {nextSteps.map((step) => (
                   <li key={step}>{step}</li>
                 ))}
               </ul>
             </div>
-            <div className="mt-7 border-l-2 border-champagne bg-ivory p-5 text-sm leading-6 text-neutral-700">
+            <div className="mt-6 border-l-2 border-champagne bg-ivory p-4 text-sm leading-6 text-neutral-700 md:mt-7 md:p-5">
               <strong>Airport pickup note:</strong> For arrival pickups, please proceed to the arrival hall after baggage claim. Name-sign and chauffeur contact details are confirmed before service when included in the booking.
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-wrap gap-2.5 md:mt-8 md:gap-3">
               <Link href="/booking" className="btn">
                 New Booking
               </Link>

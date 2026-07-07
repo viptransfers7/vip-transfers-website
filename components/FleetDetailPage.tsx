@@ -9,9 +9,9 @@ export function FleetDetailPage({ vehicle }: { vehicle: FleetVehicle }) {
         <div className="container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <div className="eyebrow">{vehicle.requestedType}</div>
-            <h1 className="serif-title mt-5 text-4xl leading-[1] sm:text-5xl md:text-7xl">{vehicle.name}</h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-white/70">{vehicle.profile}</p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <h1 className="serif-title mt-4 text-[2rem] leading-[1.04] sm:text-4xl md:mt-5 md:text-6xl">{vehicle.name}</h1>
+            <p className="mt-5 max-w-2xl text-sm leading-6 text-white/70 md:mt-7 md:text-base md:leading-7">{vehicle.profile}</p>
+            <div className="mt-7 flex flex-wrap gap-2.5 sm:gap-3 md:mt-9">
               <Link href="/booking" className="btn btn-gold">
                 Request this vehicle type
               </Link>
@@ -33,9 +33,9 @@ export function FleetDetailPage({ vehicle }: { vehicle: FleetVehicle }) {
             ["Luggage", vehicle.luggage],
             ["Requested type", vehicle.requestedType]
           ].map(([label, value]) => (
-            <div key={label} className="surface-card border-l-2 border-l-champagne p-5">
+            <div key={label} className="surface-card border-l-2 border-l-champagne p-4 md:p-5">
               <div className="muted-label">{label}</div>
-              <div className="serif-title mt-2 text-3xl">{value}</div>
+              <div className="serif-title mt-2 text-2xl md:text-3xl">{value}</div>
             </div>
           ))}
         </div>
@@ -45,19 +45,19 @@ export function FleetDetailPage({ vehicle }: { vehicle: FleetVehicle }) {
         <div className="container grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <div className="eyebrow">{vehicle.category}</div>
-            <h2 className="serif-title mt-4 text-3xl leading-[1.05] sm:text-4xl">Representative vehicle for polished Korea movement.</h2>
-            <p className="mt-5 max-w-xl leading-7 text-neutral-600">{vehicle.summary}</p>
-            <div className="mt-7 border-l-2 border-champagne bg-white p-5 text-sm leading-6 text-neutral-700">
+            <h2 className="serif-title mt-3 text-[1.75rem] leading-[1.06] sm:text-3xl md:mt-4 md:text-4xl">Representative vehicle for polished Korea movement.</h2>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-neutral-600 md:mt-5 md:text-base md:leading-7">{vehicle.summary}</p>
+            <div className="mt-6 border-l-2 border-champagne bg-white p-4 text-sm leading-6 text-neutral-700 md:mt-7 md:p-5">
               {vehicle.bookingNote}
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="surface-card p-5">
+            <div className="surface-card p-4 md:p-5">
               <div className="muted-label accent-label">Best use</div>
-              <h3 className="serif-title mt-3 text-2xl">{vehicle.bestUseCase}</h3>
+              <h3 className="serif-title mt-3 text-xl md:text-2xl">{vehicle.bestUseCase}</h3>
               <p className="mt-4 text-sm leading-6 text-neutral-600">{vehicle.comfort}</p>
             </div>
-            <div className="surface-card p-5">
+            <div className="surface-card p-4 md:p-5">
               <div className="muted-label accent-label">Planning fit</div>
               <p className="mt-3 text-sm font-bold leading-6 text-neutral-700">{vehicle.capacityNote}</p>
               <p className="mt-3 text-sm leading-6 text-neutral-600">{vehicle.luggageNote}</p>
@@ -70,9 +70,9 @@ export function FleetDetailPage({ vehicle }: { vehicle: FleetVehicle }) {
         <div className="container grid gap-10 md:grid-cols-3">
           <div>
             <div className="eyebrow">Best for</div>
-            <div className="mt-6 grid gap-3">
+            <div className="mt-4 grid gap-3 md:mt-6">
               {vehicle.bestFor.map((item) => (
-                <div key={item} className="border-t hairline pt-4 text-lg">
+                <div key={item} className="border-t hairline pt-3 text-base md:pt-4 md:text-lg">
                   {item}
                 </div>
               ))}
@@ -80,9 +80,9 @@ export function FleetDetailPage({ vehicle }: { vehicle: FleetVehicle }) {
           </div>
           <div>
             <div className="eyebrow">Details</div>
-            <div className="mt-6 grid gap-3">
+            <div className="mt-4 grid gap-3 md:mt-6">
               {vehicle.details.map((item) => (
-                <div key={item} className="border-t hairline pt-4 text-lg">
+                <div key={item} className="border-t hairline pt-3 text-base md:pt-4 md:text-lg">
                   {item}
                 </div>
               ))}
@@ -90,9 +90,9 @@ export function FleetDetailPage({ vehicle }: { vehicle: FleetVehicle }) {
           </div>
           <div>
             <div className="eyebrow">Planning notes</div>
-            <div className="mt-6 grid gap-3">
+            <div className="mt-4 grid gap-3 md:mt-6">
               {vehicle.planningNotes.map((item) => (
-                <div key={item} className="border-t hairline pt-4 text-lg">
+                <div key={item} className="border-t hairline pt-3 text-base md:pt-4 md:text-lg">
                   {item}
                 </div>
               ))}

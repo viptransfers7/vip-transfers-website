@@ -22,24 +22,24 @@ const services = [
 export default function HomePage() {
   return (
     <main>
-      <section className="relative grid min-h-[calc(100svh-104px)] overflow-hidden bg-ink text-white lg:grid-cols-[1.02fr_0.98fr]">
+      <section className="relative grid min-h-[calc(88svh-82px)] overflow-hidden bg-ink text-white md:min-h-[calc(92svh-96px)] lg:grid-cols-[1.02fr_0.98fr]">
         <Image src="/Images/business.webp" alt="" fill priority className="object-cover opacity-25 lg:hidden" sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/88 via-black/78 to-black/94 lg:hidden" />
-        <div className="relative z-10 flex flex-col justify-center px-5 py-12 md:px-14 md:py-20 lg:px-20">
+        <div className="relative z-10 flex flex-col justify-center px-5 py-10 md:px-14 md:py-16 lg:px-20">
           <div className="eyebrow">VIP Transfers Korea</div>
-          <h1 className="serif-title mt-5 max-w-4xl text-4xl leading-[1] sm:text-5xl md:text-7xl xl:text-8xl">Private chauffeur service for VIP travel in Korea.</h1>
-          <p className="mt-6 max-w-2xl text-base leading-7 text-white/74 md:text-lg md:leading-8">
+          <h1 className="serif-title mt-4 max-w-4xl text-[2rem] leading-[1.03] sm:text-5xl md:text-6xl xl:text-7xl">Private chauffeur service for VIP travel in Korea.</h1>
+          <p className="mt-5 max-w-2xl text-sm leading-6 text-white/74 md:text-lg md:leading-8">
             Premium airport transfers, executive roadshows, hourly chauffeurs, and private tours for overseas guests moving through Seoul and Korea.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link href="/booking" className="btn btn-gold w-full sm:w-auto">
+          <div className="mt-7 flex flex-wrap gap-2.5 sm:gap-3">
+            <Link href="/booking" className="btn btn-gold">
               Book Chauffeur Service
             </Link>
-            <Link href="/contact" className="btn btn-light w-full sm:w-auto">
+            <Link href="/contact" className="btn btn-light">
               Request VIP Support
             </Link>
           </div>
-          <div className="surface-card-dark mt-8 grid max-w-3xl gap-2 p-2 backdrop-blur md:mt-10 md:grid-cols-[1fr_1fr_1fr_auto]">
+          <div className="surface-card-dark mt-8 hidden max-w-3xl gap-2 p-2 backdrop-blur md:mt-10 md:grid md:grid-cols-[1fr_1fr_1fr_auto]">
             {[
               ["Typical request", "ICN arrival to Seoul"],
               ["Vehicle class", "Sedan, SUV, van"],
@@ -70,9 +70,9 @@ export default function HomePage() {
       <section className="section border-b hairline">
         <div className="container grid gap-3 md:grid-cols-4">
           {trust.map(([title, copy]) => (
-            <div key={title} className="surface-card border-l-2 border-l-champagne px-5 py-6">
-              <div className="text-sm font-black uppercase tracking-[0.12em]">{title}</div>
-              <p className="mt-3 text-sm leading-6 text-neutral-600">{copy}</p>
+            <div key={title} className="surface-card border-l-2 border-l-champagne p-4 md:px-5 md:py-6">
+              <div className="text-xs font-black uppercase tracking-[0.12em] md:text-sm">{title}</div>
+              <p className="mt-2 text-sm leading-6 text-neutral-600 md:mt-3">{copy}</p>
             </div>
           ))}
         </div>
@@ -85,10 +85,10 @@ export default function HomePage() {
             title="Built around the way VIP guests actually move in Korea."
             copy="Use the booking flow for standard transfers, or contact the team for roadshows, delegations, multi-day schedules, and custom private itineraries."
           />
-          <div className="mt-12 grid gap-4 md:grid-cols-5">
+          <div className="mt-8 grid gap-4 md:mt-12 md:grid-cols-5">
             {services.map(([title, copy]) => (
-              <div key={title} className="surface-card p-5">
-                <h3 className="serif-title text-2xl">{title}</h3>
+              <div key={title} className="surface-card p-4 md:p-5">
+                <h3 className="serif-title text-xl md:text-2xl">{title}</h3>
                 <p className="mt-4 text-sm leading-6 text-neutral-600">{copy}</p>
               </div>
             ))}
@@ -106,7 +106,7 @@ export default function HomePage() {
           />
           <div className="grid gap-3 sm:grid-cols-2">
             {["Seoul", "Incheon Airport", "Gimpo Airport", "Hotels", "Business districts", "Event venues", "Convention centers", "Private residences"].map((item) => (
-              <div key={item} className="surface-card-dark p-5 text-white/82">
+              <div key={item} className="surface-card-dark p-4 text-sm text-white/82 md:p-5 md:text-base">
                 {item}
               </div>
             ))}
@@ -122,7 +122,7 @@ export default function HomePage() {
               View Fleet
             </Link>
           </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:mt-12 md:grid-cols-3">
             {vehicles.map((vehicle) => (
               <FleetCard key={vehicle.slug} vehicle={vehicle} />
             ))}
@@ -135,9 +135,9 @@ export default function HomePage() {
           <SectionHeading eyebrow="Airport Pickup Guide" title="Clear arrival flow for international guests." />
           <div className="grid gap-4">
             {["We track your flight.", "After baggage claim, please proceed to the arrival hall.", "Your chauffeur will meet you with your name sign."].map((item, index) => (
-              <div key={item} className="flex gap-5 border-t hairline pt-5">
-                <span className="serif-title text-4xl text-bronze">0{index + 1}</span>
-                <p className="pt-2 text-lg text-neutral-700">{item}</p>
+              <div key={item} className="flex gap-4 border-t hairline pt-4 md:gap-5 md:pt-5">
+                <span className="serif-title text-3xl text-bronze md:text-4xl">0{index + 1}</span>
+                <p className="pt-1 text-base leading-7 text-neutral-700 md:pt-2 md:text-lg">{item}</p>
               </div>
             ))}
           </div>
@@ -171,8 +171,8 @@ export default function HomePage() {
         <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <div className="eyebrow">Ready to move</div>
-            <h2 className="serif-title mt-4 max-w-3xl text-4xl leading-[1.02] md:text-6xl">Start with a booking or send the schedule.</h2>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <h2 className="serif-title mt-4 max-w-3xl text-[1.8rem] leading-[1.05] md:text-6xl">Start with a booking or send the schedule.</h2>
+            <div className="mt-6 flex flex-wrap gap-2.5 sm:gap-3 md:mt-7">
               <Link href="/booking" className="btn btn-gold">
                 Book Chauffeur Service
               </Link>

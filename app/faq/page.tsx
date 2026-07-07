@@ -49,8 +49,8 @@ export default function FAQPage() {
       <section className="section bg-ink text-white">
         <div className="container">
           <div className="eyebrow">FAQ</div>
-          <h1 className="serif-title mt-5 max-w-4xl text-4xl leading-[1] sm:text-5xl md:text-7xl">Answers before you book.</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/70">
+          <h1 className="serif-title mt-4 max-w-4xl text-[2rem] leading-[1.04] sm:text-4xl md:mt-5 md:text-6xl">Answers before you book.</h1>
+          <p className="mt-5 max-w-3xl text-sm leading-6 text-white/70 md:mt-6 md:text-base md:leading-7">
             Practical details for airport pickups, custom quotes, payment timing, vehicle fit, and tracking links.
           </p>
         </div>
@@ -58,8 +58,8 @@ export default function FAQPage() {
       <section className="section">
         <div className="container grid gap-4 md:grid-cols-2">
           {faqs.map(([question, answer]) => (
-            <div key={question} className="surface-card p-6">
-              <h2 className="text-lg font-black">{question}</h2>
+            <div key={question} className="surface-card p-4 md:p-6">
+              <h2 className="text-base font-black md:text-lg">{question}</h2>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-neutral-600">{answer}</p>
             </div>
           ))}

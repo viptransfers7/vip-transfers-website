@@ -74,7 +74,7 @@ canvas {
 }
 
 .section {
-  padding: clamp(56px, 7vw, 112px) clamp(20px, 5vw, 72px);
+  padding: clamp(48px, 6vw, 96px) clamp(18px, 5vw, 64px);
 }
 
 .container {
@@ -100,7 +100,7 @@ canvas {
 
 .copy {
   color: rgb(82 82 82);
-  line-height: 1.75;
+  line-height: 1.7;
 }
 
 .muted-label {
@@ -118,14 +118,14 @@ canvas {
 
 .surface-card {
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 16px 50px rgba(9, 10, 11, 0.08);
+  box-shadow: 0 12px 36px rgba(9, 10, 11, 0.065);
 }
 
 .surface-card-dark {
   border: 1px solid var(--dark-line);
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.065);
 }
 
@@ -147,14 +147,14 @@ canvas {
 
 .btn {
   display: inline-flex;
-  min-height: 46px;
+  min-height: 42px;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid currentColor;
-  padding: 0 18px;
-  font-size: 0.92rem;
+  padding: 0 15px;
+  font-size: 0.86rem;
   font-weight: 800;
   line-height: 1.1;
   text-align: center;
@@ -200,14 +200,23 @@ canvas {
   color: var(--ink);
 }
 
+.btn-compact {
+  min-height: 38px;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 0.8rem;
+}
+
 .field {
   width: 100%;
-  min-height: 46px;
+  min-height: 44px;
   border: 1px solid rgba(9, 10, 11, 0.16);
-  border-radius: 4px;
+  border-radius: 6px;
   background: white;
-  padding: 10px 12px;
+  padding: 9px 11px;
   color: #111;
+  font-size: 16px;
+  font-weight: 600;
   outline: none;
 }
 
@@ -232,14 +241,27 @@ canvas {
 
 @media (max-width: 760px) {
   .section {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 42px 18px;
   }
 
   .btn {
-    min-height: 44px;
-    padding-left: 16px;
-    padding-right: 16px;
+    min-height: 40px;
+    padding-left: 13px;
+    padding-right: 13px;
+    font-size: 0.84rem;
+  }
+
+  .btn-compact {
+    min-height: 36px;
+    padding-left: 11px;
+    padding-right: 11px;
+    font-size: 0.78rem;
+  }
+
+  .field {
+    min-height: 42px;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 
   .eyebrow,

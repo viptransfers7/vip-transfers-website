@@ -42,14 +42,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="font-sans antialiased">
-        <div className="bg-ink px-4 py-2 text-center text-[10px] font-semibold uppercase leading-4 tracking-[0.12em] text-[#e8dfca] md:text-xs md:tracking-[0.16em]">
+        <div className="bg-ink px-4 py-1.5 text-center text-[9px] font-semibold uppercase leading-4 tracking-[0.1em] text-[#e8dfca] md:py-2 md:text-xs md:tracking-[0.16em]">
           SEOUL AND KOREA PRIVATE CHAUFFEUR SERVICE
         </div>
-        <header className="sticky top-0 z-50 border-b hairline bg-paper/[0.92] px-4 py-3 backdrop-blur-xl md:px-8 lg:px-12">
-          <nav className="relative mx-auto flex max-w-[1240px] items-center justify-between gap-4">
+        <header className="sticky top-0 z-50 border-b hairline bg-paper/[0.94] px-4 py-2.5 backdrop-blur-xl md:px-8 md:py-3 lg:px-12">
+          <nav className="relative mx-auto flex max-w-[1240px] items-center justify-between gap-3">
             <Link href="/" className="grid min-w-0 gap-0.5">
-              <strong className="truncate text-sm font-black uppercase tracking-[0.18em] md:text-base md:tracking-[0.22em]">VIP Transfers Korea</strong>
-              <span className="hidden text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500 sm:block">Private chauffeur service</span>
+              <strong className="truncate text-xs font-black tracking-[0.06em] sm:text-sm md:text-base md:uppercase md:tracking-[0.2em]">VIP Transfers Korea</strong>
+              <span className="hidden text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500 md:block">Private chauffeur service</span>
             </Link>
             <div className="hidden items-center gap-6 text-sm font-semibold text-neutral-700 lg:flex">
               {navItems.map(([label, href]) => (
@@ -59,21 +59,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ))}
             </div>
             <div className="flex items-center gap-2">
-              <Link href="/contact" className="btn hidden min-h-10 px-4 text-sm md:inline-flex">
-                Contact
-              </Link>
-              <Link href="/booking" className="btn btn-dark min-h-10 px-4 text-sm">
+              <span className="hidden md:inline-flex">
+                <Link href="/contact" className="btn btn-compact">
+                  Contact
+                </Link>
+              </span>
+              <Link href="/booking" className="btn btn-dark btn-compact">
                 Book
               </Link>
               <details className="group lg:hidden">
-                <summary className="btn min-h-10 cursor-pointer px-4 text-sm">Menu</summary>
+                <summary className="btn btn-compact cursor-pointer">Menu</summary>
                 <div className="absolute left-0 right-0 top-[calc(100%+12px)] grid gap-1 border hairline bg-paper p-2 shadow-quiet">
                   {navItems.map(([label, href]) => (
-                    <Link key={href} href={href} className="min-h-11 px-3 py-3 text-sm font-bold text-neutral-700 transition hover:bg-white hover:text-ink">
+                    <Link key={href} href={href} className="min-h-10 px-3 py-2.5 text-sm font-bold text-neutral-700 transition hover:bg-white hover:text-ink">
                       {label}
                     </Link>
                   ))}
-                  <Link href="/contact" className="min-h-11 px-3 py-3 text-sm font-bold text-neutral-700 transition hover:bg-white hover:text-ink md:hidden">
+                  <Link href="/contact" className="min-h-10 px-3 py-2.5 text-sm font-bold text-neutral-700 transition hover:bg-white hover:text-ink md:hidden">
                     Contact
                   </Link>
                 </div>

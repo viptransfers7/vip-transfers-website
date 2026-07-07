@@ -22,21 +22,21 @@ export function VehicleCard({
       type="button"
       onClick={onSelect}
       disabled={disabled}
-      className={`grid min-h-[196px] overflow-hidden border bg-white text-left transition sm:grid-cols-[220px_minmax(0,1fr)] ${
+      className={`grid min-h-[168px] overflow-hidden border bg-white text-left transition sm:min-h-[196px] sm:grid-cols-[220px_minmax(0,1fr)] ${
         selected ? "border-champagne shadow-soft" : "hairline"
       } ${disabled ? "opacity-45" : "hover:-translate-y-0.5"}`}
     >
-      <div className="relative aspect-[16/10] min-h-[150px] bg-neutral-100 sm:aspect-auto sm:h-full">
+      <div className="relative aspect-[16/9] min-h-[128px] bg-neutral-100 sm:aspect-auto sm:min-h-[150px] sm:h-full">
         <Image src={vehicle.imageUrl} alt={vehicle.vehicleName} fill className="object-cover" sizes="(max-width: 768px) 100vw, 220px" />
       </div>
-      <div className="flex min-w-0 flex-col p-5">
-        <div className="text-xs font-bold uppercase tracking-[0.14em] text-[#9a7b41]">{vehicle.vehicleTypeName}</div>
-        <div className="mt-2 text-lg font-black">{vehicle.vehicleName}</div>
+      <div className="flex min-w-0 flex-col p-4 md:p-5">
+        <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs">{vehicle.vehicleTypeName}</div>
+        <div className="mt-1.5 text-base font-black md:mt-2 md:text-lg">{vehicle.vehicleName}</div>
         <div className="mt-1 text-xs font-bold text-neutral-500">{vehicle.category}</div>
         <div className="mt-3 text-sm text-neutral-600">
           Max {vehicle.maxPax} pax / {vehicle.maxLuggage} luggage
         </div>
-        <div className="mt-auto pt-5 text-sm font-black">{statusLabel}</div>
+        <div className="mt-auto pt-4 text-sm font-black md:pt-5">{statusLabel}</div>
       </div>
     </button>
   );
