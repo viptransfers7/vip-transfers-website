@@ -256,7 +256,7 @@ export function BookingFlow() {
   const finalActionLabel = submitting ? "Processing..." : selectedQuote?.requiresCustomQuote ? "Submit quote request" : "Continue to payment";
 
   return (
-    <div className="overflow-hidden border hairline bg-white shadow-soft">
+    <div className="overflow-hidden rounded-lg border hairline bg-white shadow-soft">
       <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} />
       <section className="p-3 sm:p-4 md:p-6 lg:p-8">
         {error ? <div className="mb-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}

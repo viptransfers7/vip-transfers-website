@@ -98,23 +98,20 @@ export function TripDetailsStep({
         </label>
 
         {isAirport ? (
-          <div className="col-span-2 flex items-center justify-between gap-2 border hairline bg-white p-1 text-sm font-bold">
-            <span className="pl-2 text-[10px] font-black uppercase tracking-[0.1em] text-neutral-500 md:pl-3 md:text-xs md:tracking-[0.12em]">Airport ride</span>
-            <div className="grid min-w-[150px] grid-cols-2 md:min-w-[188px]">
-              {[
-                ["arrival", "From"],
-                ["departure", "To"]
-              ].map(([value, title]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => updateAirportDirection(value as AirportDirection)}
-                  className={`h-9 px-2 text-center text-[13px] font-black md:h-10 md:px-3 md:text-sm ${trip.airportDirection === value ? "bg-ivory text-black" : "text-neutral-500"}`}
-                >
-                  {title}
-                </button>
-              ))}
-            </div>
+          <div className="col-span-2 grid grid-cols-2 bg-neutral-100 p-1 text-sm font-bold" aria-label="Airport ride direction">
+            {[
+              ["arrival", "Arriving"],
+              ["departure", "Departing"]
+            ].map(([value, title]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => updateAirportDirection(value as AirportDirection)}
+                className={`h-9 px-2 text-center text-[13px] font-black transition md:h-10 md:px-3 md:text-sm ${trip.airportDirection === value ? "bg-white text-black shadow-[0_1px_8px_rgba(9,10,11,0.08)]" : "text-neutral-500"}`}
+              >
+                {title}
+              </button>
+            ))}
           </div>
         ) : null}
 
@@ -188,10 +185,12 @@ export function TripDetailsStep({
         </label>
 
         {isAirport ? (
-          <label className="col-span-2 flex flex-wrap items-center gap-2.5 border hairline bg-ivory p-3 text-[13px] font-bold md:gap-3 md:p-4 md:text-sm">
-            <input type="checkbox" checked={trip.isRoundTrip} onChange={(event) => updateRoundTrip(event.target.checked)} />
-            Round-trip airport booking
-            <span className="ml-auto text-xs text-[#9a7b41] md:text-sm">10% round-trip discount</span>
+          <label className="col-span-2 flex items-center justify-between gap-3 py-2 text-[13px] font-bold md:text-sm">
+            <span className="flex min-w-0 items-center gap-2.5">
+              <input className="accent-black" type="checkbox" checked={trip.isRoundTrip} onChange={(event) => updateRoundTrip(event.target.checked)} />
+              <span>Round-trip airport booking</span>
+            </span>
+            <span className="shrink-0 text-xs text-[#9a7b41] md:text-sm">Save 10%</span>
           </label>
         ) : null}
 

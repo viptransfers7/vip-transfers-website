@@ -14,22 +14,23 @@ export function ServiceStep({ serviceType, setServiceType }: { serviceType: Serv
   const selectedService = services.find((service) => service.type === serviceType) || services[0];
 
   return (
-    <section className="border hairline bg-[#fbfaf6] p-3.5 md:p-5">
+    <section className="bg-white">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs md:tracking-[0.16em]">Service</div>
           <h1 className="mt-1 text-xl font-black leading-tight md:text-2xl">Book your chauffeur</h1>
+          <p className="mt-1 text-sm leading-5 text-neutral-500 sm:hidden">{selectedService.copy}</p>
         </div>
         <p className="hidden max-w-sm text-sm leading-6 text-neutral-600 sm:block">{selectedService.copy}</p>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-5">
+      <div className="mt-4 flex flex-wrap gap-2">
         {services.map((service) => (
           <button
             key={service.type}
             type="button"
             onClick={() => setServiceType(service.type)}
-            className={`min-h-10 border px-3 py-2 text-left text-[13px] font-black transition md:min-h-11 md:py-2.5 md:text-sm ${
-              serviceType === service.type ? "border-black bg-black text-white" : "hairline bg-white text-neutral-700 hover:border-champagne hover:text-black"
+            className={`min-h-9 shrink-0 rounded-md px-3 py-2 text-left text-[13px] font-black transition md:min-h-10 md:px-4 md:text-sm ${
+              serviceType === service.type ? "bg-black text-white" : "bg-neutral-100 text-neutral-600 hover:bg-ivory hover:text-black"
             }`}
           >
             <span className="sm:hidden">{service.shortTitle}</span>
