@@ -32,8 +32,8 @@ export function VehicleStep({
         </div>
         {loading ? <span className="text-sm font-bold text-[#9a7b41]">Calculating quotes...</span> : null}
       </div>
-      <div className="mt-5 grid gap-4 md:mt-7 md:gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="grid gap-3">
+      <div className="mt-5 grid gap-4 md:mt-7 md:gap-5 xl:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid gap-3 xl:grid-cols-2">
           {vehiclePricing.map((vehicle) => (
             <VehicleCard
               key={vehicle.vehicleCode}
