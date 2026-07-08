@@ -23,13 +23,13 @@ export function ServiceStep({ serviceType, setServiceType }: { serviceType: Serv
         </div>
         <p className="mt-3 hidden max-w-xl text-sm leading-6 text-neutral-600 sm:block">{selectedService.copy}</p>
       </div>
-      <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+      <div className="mt-5 flex flex-wrap gap-2">
         {services.map((service) => (
           <button
             key={service.type}
             type="button"
             onClick={() => setServiceType(service.type)}
-            className={`min-h-10 shrink-0 rounded-full border px-4 py-2 text-left text-[13px] font-black transition md:min-h-11 md:px-5 md:text-sm ${
+            className={`min-h-10 rounded-full border px-3.5 py-2 text-left text-[13px] font-black transition md:min-h-11 md:px-5 md:text-sm ${
               serviceType === service.type ? "border-ink bg-ink text-white" : "hairline bg-white text-neutral-700 hover:border-neutral-300 hover:text-black"
             }`}
           >

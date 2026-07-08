@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { vehiclePricing } from "@/lib/pricing/pricingData";
 import { airportPickupInstruction } from "@/lib/pricing/calculateQuote";
@@ -24,7 +24,6 @@ function minDateTimeValue() {
   return dateTimeValue(3);
 }
 
-const defaultPickupDateTime = dateTimeValue(4);
 const bookingSteps = ["Ride", "Vehicle", "Confirm"];
 const nextLabels = ["Choose vehicle", "Review booking"];
 
@@ -36,9 +35,9 @@ type PayPalOrderResponse = {
 };
 
 const initialTrip: TripForm = {
-  pickupDate: defaultPickupDateTime.slice(0, 10),
-  pickupTime: defaultPickupDateTime.slice(11, 16),
-  pickupLocation: "Incheon International Airport Terminal 2",
+  pickupDate: "",
+  pickupTime: "",
+  pickupLocation: "ICN - Incheon Intl T2",
   dropoffLocation: "Four Seasons Hotel Seoul",
   stopover: "",
   airportDirection: "arrival",
@@ -78,8 +77,8 @@ export function BookingFlow() {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [minDateTime, setMinDateTime] = useState("");
 
-  const minDateTime = useMemo(() => minDateTimeValue(), []);
   const selectedVehicle = vehiclePricing.find((vehicle) => vehicle.vehicleCode === vehicleCode) || vehiclePricing[0];
   const selectedQuote = quotes[vehicleCode] || null;
 
@@ -123,9 +122,27 @@ export function BookingFlow() {
   );
 
   useEffect(() => {
+    const pickupDateTime = dateTimeValue(4);
+    setMinDateTime(minDateTimeValue());
+    setTripState((current) =>
+      current.pickupDate && current.pickupTime
+        ? current
+        : {
+            ...current,
+            pickupDate: pickupDateTime.slice(0, 10),
+            pickupTime: pickupDateTime.slice(11, 16)
+          }
+    );
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadQuotes() {
+      if (!trip.pickupDate || !trip.pickupTime) {
+        setQuoteLoading(false);
+        return;
+      }
       setQuoteLoading(true);
       const nextQuotes: Record<string, QuoteResponse> = {};
       await Promise.all(
@@ -154,7 +171,7 @@ export function BookingFlow() {
     return () => {
       cancelled = true;
     };
-  }, [buildQuoteInput]);
+  }, [buildQuoteInput, trip.pickupDate, trip.pickupTime]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -259,7 +276,7 @@ export function BookingFlow() {
 
   return (
     <div className="min-h-[calc(100vh-104px)] overflow-hidden bg-[#fbfaf7] shadow-[0_16px_44px_rgba(10,10,11,.07)] sm:rounded-lg">
-      <div className={step === 0 ? "xl:grid xl:grid-cols-[minmax(0,1fr)_360px]" : ""}>
+      <div className={step === 0 ? "xl:grid xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_420px]" : ""}>
         <section className="px-5 pb-28 pt-5 sm:px-7 sm:pt-7 md:px-10 md:pb-0 md:pt-9 lg:px-14">
           <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} onBack={() => setStep(Math.max(0, step - 1))} />
           {error ? <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}

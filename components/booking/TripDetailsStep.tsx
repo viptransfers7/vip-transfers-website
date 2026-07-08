@@ -288,7 +288,7 @@ function isAirportName(value = "") {
 function getAirportLocationFromTrip(pickupLocation: string, dropoffLocation: string) {
   if (isAirportName(pickupLocation)) return pickupLocation;
   if (isAirportName(dropoffLocation)) return dropoffLocation;
-  return "Incheon International Airport Terminal 2";
+  return "ICN - Incheon Intl T2";
 }
 
 function getAirportCodeFromTrip(pickupLocation: string, dropoffLocation: string) {

@@ -26,10 +26,10 @@ declare global {
 }
 
 const suggestions = [
-  "Incheon International Airport Terminal 1",
-  "Incheon International Airport Terminal 2",
-  "Gimpo Airport Domestic Terminal",
-  "Gimpo Airport International Terminal",
+  "ICN - Incheon Intl T1",
+  "ICN - Incheon Intl T2",
+  "GMP - Gimpo Domestic",
+  "GMP - Gimpo International",
   "Four Seasons Hotel Seoul",
   "Lotte Hotel Seoul",
   "The Shilla Seoul",
