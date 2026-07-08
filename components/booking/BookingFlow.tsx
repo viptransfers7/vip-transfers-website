@@ -294,11 +294,11 @@ export function BookingFlow() {
     <div className="min-h-[calc(100vh-104px)] overflow-hidden bg-[#fbfaf7] shadow-[0_16px_44px_rgba(10,10,11,.07)] sm:rounded-lg">
       <div className={step === 0 ? "xl:grid xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_420px]" : ""}>
         <section className="px-5 pb-28 pt-5 sm:px-7 sm:pt-7 md:px-10 md:pb-0 md:pt-9 lg:px-14">
-          <div className={step === 0 ? "mx-auto max-w-[560px] xl:mx-0" : ""}>
+          <div className={step === 0 ? "mx-auto max-w-[560px] xl:mx-0 xl:max-w-[780px] 2xl:max-w-[820px]" : ""}>
             <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} onBack={() => setStep(Math.max(0, step - 1))} />
             {error ? <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}
             {step === 0 ? (
-              <div className="mx-auto grid max-w-[560px] gap-5 md:gap-7 xl:mx-0">
+              <div className="mx-auto grid max-w-[560px] gap-5 md:gap-7 xl:mx-0 xl:max-w-[780px] 2xl:max-w-[820px]">
                 <ServiceStep serviceType={serviceType} setServiceType={setServiceType} />
                 <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
               </div>
