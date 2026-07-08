@@ -89,10 +89,10 @@ export function ConfirmStep({
             <div className="mt-4 border-t hairline pt-4">
               <div className="flex items-center justify-between gap-4 text-sm">
                 <span className="font-semibold text-neutral-500">Payment method</span>
-                <span className="text-right font-black text-ink">{quote?.requiresCustomQuote ? "After quote confirmation" : "Secure card"}</span>
+                <span className="text-right font-black text-ink">{quote?.requiresCustomQuote ? "After quote confirmation" : "Direct payment"}</span>
               </div>
               <p className="mt-2 text-xs font-semibold leading-5 text-neutral-500">
-                {quote?.requiresCustomQuote ? "No payment is collected until availability and final pricing are confirmed in USD." : "Charged 24 hours before pickup in USD."}
+                {quote?.requiresCustomQuote ? "No payment is collected until availability and final pricing are confirmed in USD." : "Payment is collected immediately in USD at checkout."}
               </p>
             </div>
             <div className="mt-4 flex items-center gap-2 border-t hairline pt-4 text-xs font-semibold leading-5 text-neutral-500">
