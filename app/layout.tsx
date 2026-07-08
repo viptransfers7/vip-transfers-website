@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Roboto_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
+const priceMono = Roboto_Mono({ subsets: ["latin"], variable: "--font-price-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: {
@@ -40,7 +41,7 @@ const footerGroups = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable} ${priceMono.variable}`}>
       <body className="font-sans antialiased">
         <div className="bg-ink px-4 py-1.5 text-center text-[9px] font-semibold uppercase leading-4 tracking-[0.1em] text-[#e8dfca] md:py-2 md:text-xs md:tracking-[0.16em]">
           SEOUL AND KOREA PRIVATE CHAUFFEUR SERVICE

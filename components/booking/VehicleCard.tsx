@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { formatUSD } from "@/lib/format";
 import type { QuoteResponse, VehiclePricing } from "@/lib/pricing/types";
 
 export function VehicleCard({
@@ -17,7 +18,7 @@ export function VehicleCard({
   onPreview: () => void;
 }) {
   const disabled = quote?.suggestedAction === "change_vehicle";
-  const statusLabel = getStatusLabel(quote);
+  const status = getStatus(quote);
 
   return (
     <article className={`rounded-xl border bg-white p-3 transition md:p-4 ${selected ? "border-2 border-ink shadow-[0_10px_28px_rgba(10,10,11,.08)]" : "hairline hover:border-neutral-300"} ${disabled ? "opacity-55" : ""}`}>
@@ -32,7 +33,14 @@ export function VehicleCard({
             <span className="mt-0.5 block text-sm font-semibold text-neutral-400">{vehicle.category}</span>
           </span>
           <span className="text-right">
-            <span className="block text-[15px] font-bold tracking-tight text-neutral-900 tabular-nums">{statusLabel}</span>
+            {status.kind === "price" ? (
+              <span className="block">
+                <span className="block text-[12px] font-normal leading-4 text-neutral-400">from</span>
+                <span className="block font-mono text-[15px] font-semibold leading-5 tracking-[-0.02em] text-ink tabular-nums">{status.label}</span>
+              </span>
+            ) : (
+              <span className={`block text-[15px] font-semibold leading-5 ${status.kind === "custom" ? "text-[#8f7241]" : "text-neutral-500"}`}>{status.label}</span>
+            )}
             {selected ? <span className="mt-1 inline-block rounded-full bg-[#f5efe2] px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#8f7241]">Selected</span> : null}
           </span>
         </button>
@@ -51,11 +59,11 @@ export function VehicleCard({
   );
 }
 
-function getStatusLabel(quote?: QuoteResponse) {
-  if (!quote) return "Quote pending";
-  if (quote.available) return `$${quote.finalPrice}`;
-  if (quote.requiresCustomQuote) return "Custom quote";
-  if (quote.suggestedAction === "change_vehicle") return "Does not fit";
-  if (quote.suggestedAction === "change_time") return "Time unavailable";
-  return "Quote unavailable";
+function getStatus(quote?: QuoteResponse) {
+  if (!quote) return { kind: "muted", label: "Quote pending" };
+  if (quote.available) return { kind: "price", label: formatUSD(quote.finalPrice) };
+  if (quote.requiresCustomQuote) return { kind: "custom", label: "Custom quote" };
+  if (quote.suggestedAction === "change_vehicle") return { kind: "muted", label: "Does not fit" };
+  if (quote.suggestedAction === "change_time") return { kind: "muted", label: "Time unavailable" };
+  return { kind: "muted", label: "Quote unavailable" };
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatUSD } from "@/lib/format";
 
 export const metadata = { title: "Booking Confirmed" };
 
@@ -9,7 +10,7 @@ function formatAmount(amount: string) {
     return "Confirmed in your payment receipt";
   }
 
-  return `$${normalized.toFixed(2)}`;
+  return formatUSD(normalized);
 }
 
 export default function BookingConfirmedPage({
@@ -73,7 +74,7 @@ export default function BookingConfirmedPage({
               </div>
               <div className="grid gap-1.5 border-b hairline py-2.5 md:grid-cols-[180px_1fr] md:gap-2 md:py-3">
                 <div className="font-bold text-neutral-500">Amount</div>
-                <div>{isQuote ? "To be confirmed" : formatAmount(amount)}</div>
+                <div className={isQuote ? "text-[#8f7241]" : "font-mono font-semibold tracking-[-0.02em] tabular-nums"}>{isQuote ? "Custom quote" : formatAmount(amount)}</div>
               </div>
               {token ? (
                 <div className="grid gap-1.5 border-b hairline py-2.5 md:grid-cols-[180px_1fr] md:gap-2 md:py-3">

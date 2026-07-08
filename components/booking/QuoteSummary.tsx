@@ -1,6 +1,7 @@
 "use client";
 
 import type { QuoteResponse } from "@/lib/pricing/types";
+import { formatUSD } from "@/lib/format";
 import { CustomQuoteNotice } from "./CustomQuoteNotice";
 
 export function QuoteSummary({ quote }: { quote: QuoteResponse | null }) {
@@ -27,7 +28,7 @@ export function QuoteSummary({ quote }: { quote: QuoteResponse | null }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs">Estimated price</div>
-          <div className="mt-1 text-3xl font-black tracking-tight tabular-nums md:text-[2rem]">${quote.finalPrice}</div>
+          <div className="mt-1 font-mono text-3xl font-semibold tracking-[-0.02em] tabular-nums md:text-[2rem]">{formatUSD(quote.finalPrice)}</div>
         </div>
         <span className="rounded-full bg-[#e6f4ec] px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#20664a] md:px-3 md:py-2 md:text-xs">Instant</span>
       </div>
@@ -35,7 +36,7 @@ export function QuoteSummary({ quote }: { quote: QuoteResponse | null }) {
         {quote.breakdown.map((item) => (
           <div key={item.label} className="flex justify-between border-t hairline pt-2">
             <span className="text-neutral-600">{item.label}</span>
-            <span className="font-semibold tracking-tight tabular-nums">{item.amount < 0 ? "-" : ""}${Math.abs(item.amount)}</span>
+            <span className={`font-mono font-semibold tabular-nums ${item.amount < 0 ? "text-[#8f7241]" : "text-ink"}`}>{formatUSD(item.amount)}</span>
           </div>
         ))}
       </div>

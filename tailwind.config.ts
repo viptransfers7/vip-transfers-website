@@ -22,7 +22,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Pretendard", "system-ui", "sans-serif"],
-        serif: ["var(--font-playfair)", "Georgia", "serif"]
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
+        mono: ["var(--font-price-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
       },
       boxShadow: {
         soft: "0 24px 80px rgba(9, 10, 11, 0.12)",

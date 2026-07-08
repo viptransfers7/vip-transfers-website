@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatUSD } from "@/lib/format";
 import { vehiclePricing } from "@/lib/pricing/pricingData";
 import { airportPickupInstruction } from "@/lib/pricing/calculateQuote";
 import { getTourProduct } from "@/lib/pricing/tourProducts";
@@ -277,11 +278,12 @@ export function BookingFlow() {
     step === 0
       ? { eyebrow: "Price", value: "Not shown yet", subcopy: "" }
       : selectedQuote?.available
-        ? { eyebrow: "Estimated", value: `$${selectedQuote.finalPrice}`, subcopy: "selected" }
+        ? { eyebrow: "Estimated", value: formatUSD(selectedQuote.finalPrice), subcopy: "total" }
         : selectedQuote?.requiresCustomQuote
-          ? { eyebrow: "Quote", value: "Custom", subcopy: "review" }
+          ? { eyebrow: "Quote", value: "Custom quote", subcopy: "review" }
           : { eyebrow: "Price", value: "Not shown yet", subcopy: "" };
   const stickyShowsPrice = Boolean(selectedQuote?.available || selectedQuote?.requiresCustomQuote);
+  const stickyIsCustomQuote = Boolean(selectedQuote?.requiresCustomQuote);
 
   function goToNextStep() {
     if (!canContinueFromCurrentStep) return;
@@ -316,7 +318,7 @@ export function BookingFlow() {
             <div className="min-w-0">
               <div className="text-[10px] font-black uppercase tracking-[0.12em] text-neutral-400">{stickyMeta.eyebrow}</div>
               <div className="mt-0.5 flex items-baseline gap-1">
-                <span className={stickyShowsPrice ? "text-xl font-black tracking-tight text-ink tabular-nums" : "whitespace-nowrap text-sm font-black text-ink"}>{stickyMeta.value}</span>
+                <span className={stickyShowsPrice ? (stickyIsCustomQuote ? "text-[15px] font-semibold tracking-[-0.02em] text-[#8f7241]" : "font-mono text-[20px] font-semibold tracking-[-0.02em] text-ink tabular-nums") : "whitespace-nowrap text-sm font-black text-ink"}>{stickyMeta.value}</span>
                 {stickyMeta.subcopy ? <span className="text-xs font-semibold text-neutral-500">{stickyMeta.subcopy}</span> : null}
               </div>
             </div>
@@ -416,12 +418,12 @@ function TripSummaryCard({
             {quote.breakdown.slice(0, 3).map((item) => (
               <div key={item.label} className="mb-2 flex justify-between gap-4 text-sm">
                 <span className="text-neutral-500">{item.label}</span>
-                <span className="font-semibold tracking-tight text-ink tabular-nums">{item.amount < 0 ? "-" : ""}${Math.abs(item.amount)}</span>
+                <span className={`font-mono font-semibold tabular-nums ${item.amount < 0 ? "text-[#8f7241]" : "text-ink"}`}>{formatUSD(item.amount)}</span>
               </div>
             ))}
             <div className="mt-4 flex items-end justify-between gap-4">
               <span className="font-black text-ink">Total</span>
-              <span className="text-2xl font-black tracking-tight text-ink tabular-nums">${quote.finalPrice}</span>
+              <span className="font-mono text-[20px] font-semibold tracking-[-0.02em] text-ink tabular-nums">{formatUSD(quote.finalPrice)}</span>
             </div>
           </div>
         ) : null}

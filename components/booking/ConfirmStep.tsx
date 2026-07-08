@@ -86,6 +86,19 @@ export function ConfirmStep({
                 ? "Our team will review the route, vehicle, and timing before confirming the final price."
                 : "Your reservation details are saved before payment, so the request is protected if checkout is interrupted."}
             </p>
+            <div className="mt-4 border-t hairline pt-4">
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span className="font-semibold text-neutral-500">Payment method</span>
+                <span className="text-right font-black text-ink">{quote?.requiresCustomQuote ? "After quote confirmation" : "Secure card"}</span>
+              </div>
+              <p className="mt-2 text-xs font-semibold leading-5 text-neutral-500">
+                {quote?.requiresCustomQuote ? "No payment is collected until availability and final pricing are confirmed in USD." : "Charged 24 hours before pickup in USD."}
+              </p>
+            </div>
+            <div className="mt-4 flex items-center gap-2 border-t hairline pt-4 text-xs font-semibold leading-5 text-neutral-500">
+              <LockIcon />
+              <span>Payments processed in USD by secure checkout · Secure</span>
+            </div>
             <div className="mt-4 hidden xl:block">
               <button type="button" onClick={onSubmit} disabled={cannotSubmit} className="btn btn-dark w-full">
                 {submitting ? "Processing..." : quote?.requiresCustomQuote ? "Submit quote request" : "Continue to payment"}
@@ -100,4 +113,13 @@ export function ConfirmStep({
 
 function shortPlace(value: string) {
   return value.replace("International Airport Terminal", "Intl Airport · T").replace("International Airport", "Intl Airport");
+}
+
+function LockIcon() {
+  return (
+    <svg aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-[#8f7241]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
 }
