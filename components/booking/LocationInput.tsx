@@ -47,13 +47,17 @@ export function LocationInput({
   value,
   onChange,
   onPlaceSelect,
-  placeholder
+  placeholder,
+  variant = "default",
+  marker = "pickup"
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   onPlaceSelect?: (place: PlaceSnapshot | undefined) => void;
   placeholder?: string;
+  variant?: "default" | "route";
+  marker?: "pickup" | "dropoff";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const onChangeRef = useRef(onChange);
@@ -87,15 +91,11 @@ export function LocationInput({
       .catch(() => setPlacesReady(false));
   }, []);
 
-  return (
-    <label className="col-span-2 grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
-      <span className="flex items-center justify-between gap-3">
-        {label}
-        <span className="hidden text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-400 sm:inline">{placesReady ? "Google Places" : "Suggested places"}</span>
-      </span>
+  const input = (
+    <>
       <input
         ref={inputRef}
-        className="field"
+        className={variant === "route" ? "w-full border-0 bg-transparent p-0 text-[15px] font-semibold leading-6 text-ink outline-none placeholder:text-neutral-400 md:text-base" : "field"}
         list={placesReady ? undefined : listId}
         placeholder={placeholder}
         value={value}
@@ -111,6 +111,33 @@ export function LocationInput({
           ))}
         </datalist>
       ) : null}
+    </>
+  );
+
+  if (variant === "route") {
+    return (
+      <label className="grid grid-cols-[22px_1fr] gap-3 py-3">
+        <span className="relative mt-1 flex justify-center">
+          <span className={`h-2.5 w-2.5 rounded-full ${marker === "pickup" ? "bg-ink" : "border-2 border-ink bg-white"}`} />
+        </span>
+        <span className="grid min-w-0 gap-1">
+          <span className="flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">
+            {label}
+            <span className="hidden font-bold text-neutral-300 sm:inline">{placesReady ? "Google Places" : "Suggested"}</span>
+          </span>
+          {input}
+        </span>
+      </label>
+    );
+  }
+
+  return (
+    <label className="col-span-2 grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
+      <span className="flex items-center justify-between gap-3">
+        {label}
+        <span className="hidden text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-400 sm:inline">{placesReady ? "Google Places" : "Suggested places"}</span>
+      </span>
+      {input}
     </label>
   );
 }

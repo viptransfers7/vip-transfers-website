@@ -20,7 +20,7 @@ export function GuestStep({ guest, setGuest, compact = false }: { guest: GuestDe
           Phone / WhatsApp
           <input className="field" type="tel" autoComplete="tel" required value={guest.bookerPhone} onChange={(event) => setGuest({ bookerPhone: event.target.value })} />
         </label>
-        <label className="flex items-center gap-2.5 border hairline bg-ivory p-3 text-[13px] font-bold md:col-span-2 md:gap-3 md:p-4 md:text-sm">
+        <label className="flex items-center gap-2.5 rounded-xl bg-[#fbfaf7] p-3 text-[13px] font-bold md:col-span-2 md:gap-3 md:p-4 md:text-sm">
           <input type="checkbox" checked={guest.bookingForSomeoneElse} onChange={(event) => setGuest({ bookingForSomeoneElse: event.target.checked })} />
           I am booking for someone else
         </label>
