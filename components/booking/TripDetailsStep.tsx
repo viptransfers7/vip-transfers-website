@@ -158,14 +158,14 @@ export function TripDetailsStep({
 
         <div className={`col-span-2 grid grid-cols-2 overflow-hidden rounded-xl border hairline bg-white ${isAirport ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
           <CompactField label="Date">
-            <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="date" min={minDate} value={trip.pickupDate} onChange={(event) => setTrip({ pickupDate: event.target.value })} />
+            <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="date" min={minDate} value={trip.pickupDate} onChange={(event) => setTrip({ pickupDate: event.target.value })} />
           </CompactField>
           <CompactField label="Time">
-            <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="time" min={minTime} value={trip.pickupTime} onChange={(event) => setTrip({ pickupTime: event.target.value })} />
+            <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="time" min={minTime} value={trip.pickupTime} onChange={(event) => setTrip({ pickupTime: event.target.value })} />
           </CompactField>
           {isAirport ? (
             <CompactField label={trip.airportDirection === "arrival" ? "Arrival flight" : "Departure flight"} className="col-span-2 sm:col-span-1">
-              <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none placeholder:text-neutral-400" placeholder={trip.airportDirection === "arrival" ? "KE 086" : "KE 085"} value={trip.flightNumber} onChange={(event) => setTrip({ flightNumber: event.target.value })} />
+              <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums placeholder:text-neutral-400" placeholder={trip.airportDirection === "arrival" ? "KE 086" : "KE 085"} value={trip.flightNumber} onChange={(event) => setTrip({ flightNumber: event.target.value })} />
             </CompactField>
           ) : null}
         </div>
@@ -264,13 +264,13 @@ export function TripDetailsStep({
             </div>
             <div className="col-span-2 grid grid-cols-2 overflow-hidden rounded-xl border hairline bg-white sm:grid-cols-3">
               <CompactField label="Return date">
-                <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="date" min={trip.pickupDate || minDate} value={trip.returnDate} onChange={(event) => setTrip({ returnDate: event.target.value })} />
+                <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="date" min={trip.pickupDate || minDate} value={trip.returnDate} onChange={(event) => setTrip({ returnDate: event.target.value })} />
               </CompactField>
               <CompactField label="Time">
-                <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="time" value={trip.returnTime} onChange={(event) => setTrip({ returnTime: event.target.value })} />
+                <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="time" value={trip.returnTime} onChange={(event) => setTrip({ returnTime: event.target.value })} />
               </CompactField>
               <CompactField label="Return flight" className="col-span-2 sm:col-span-1">
-                <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none placeholder:text-neutral-400" placeholder="KE 085" value={trip.returnFlight} onChange={(event) => setTrip({ returnFlight: event.target.value })} />
+                <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums placeholder:text-neutral-400" placeholder="KE 085" value={trip.returnFlight} onChange={(event) => setTrip({ returnFlight: event.target.value })} />
               </CompactField>
             </div>
           </>
@@ -318,7 +318,7 @@ function StepperField({ label, hint, value, min, onChange }: { label: string; hi
         <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full border hairline bg-white text-lg font-black text-neutral-500 transition hover:bg-neutral-50" onClick={() => onChange(Math.max(min, value - 1))}>
           -
         </button>
-        <span className="font-mono text-lg font-semibold text-ink">{value}</span>
+        <span className="min-w-5 text-center text-lg font-black tracking-tight text-ink tabular-nums">{value}</span>
         <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full border hairline bg-white text-lg font-black text-ink transition hover:bg-neutral-50" onClick={() => onChange(value + 1)}>
           +
         </button>

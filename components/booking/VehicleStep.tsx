@@ -70,11 +70,11 @@ function VehiclePreview({ vehicle, selected, onClose, onSelect }: { vehicle: Veh
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-xl bg-[#fbfaf7] p-3">
               <div className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">Passengers</div>
-              <div className="mt-1 font-mono text-lg font-semibold">{vehicle.maxPax}</div>
+              <div className="mt-1 text-lg font-black tracking-tight tabular-nums">{vehicle.maxPax}</div>
             </div>
             <div className="rounded-xl bg-[#fbfaf7] p-3">
               <div className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">Luggage</div>
-              <div className="mt-1 font-mono text-lg font-semibold">{vehicle.maxLuggage}</div>
+              <div className="mt-1 text-lg font-black tracking-tight tabular-nums">{vehicle.maxLuggage}</div>
             </div>
           </div>
           <div className="mt-5 flex gap-3">

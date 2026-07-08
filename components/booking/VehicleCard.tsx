@@ -32,13 +32,13 @@ export function VehicleCard({
             <span className="mt-0.5 block text-sm font-semibold text-neutral-400">{vehicle.category}</span>
           </span>
           <span className="text-right">
-            <span className="block font-mono text-base font-semibold text-ink md:text-lg">{statusLabel}</span>
+            <span className="block text-[15px] font-bold tracking-tight text-neutral-900 tabular-nums">{statusLabel}</span>
             {selected ? <span className="mt-1 inline-block rounded-full bg-[#f5efe2] px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.1em] text-[#8f7241]">Selected</span> : null}
           </span>
         </button>
       </div>
       <button type="button" onClick={onSelect} disabled={disabled} className="mt-3 w-full text-left">
-        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-neutral-500">
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-neutral-500 tabular-nums">
           <span>Up to {vehicle.maxPax}</span>
           <span className="text-neutral-300">|</span>
           <span>Up to {vehicle.maxLuggage} luggage</span>
