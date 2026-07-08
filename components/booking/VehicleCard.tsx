@@ -21,10 +21,10 @@ export function VehicleCard({
   const status = getStatus(quote);
 
   return (
-    <article className={`rounded-xl border bg-white p-3 transition ${selected ? "border-2 border-ink shadow-[0_10px_28px_rgba(10,10,11,.08)]" : "hairline hover:border-neutral-300"} ${disabled ? "opacity-55" : ""}`}>
-      <div className="grid grid-cols-[80px_1fr] gap-3">
-        <button type="button" onClick={onPreview} className="group relative h-14 w-20 overflow-hidden rounded-lg bg-neutral-100 text-left focus-ring" aria-label={`Open ${vehicle.vehicleName} photo`}>
-          <Image src={vehicle.imageUrl} alt={vehicle.vehicleName} fill className="object-cover transition duration-200 group-hover:scale-105" sizes="80px" />
+    <article className={`rounded-xl border bg-white p-3 transition lg:p-4 ${selected ? "border-2 border-ink shadow-[0_10px_28px_rgba(10,10,11,.08)]" : "hairline hover:border-neutral-300"} ${disabled ? "opacity-55" : ""}`}>
+      <div className="grid grid-cols-[80px_1fr] gap-3 lg:grid-cols-[152px_1fr] lg:gap-5">
+        <button type="button" onClick={onPreview} className="group relative h-14 w-20 overflow-hidden rounded-lg bg-neutral-100 text-left focus-ring lg:h-24 lg:w-[152px] lg:rounded-xl" aria-label={`Open ${vehicle.vehicleName} photo`}>
+          <Image src={vehicle.imageUrl} alt={vehicle.vehicleName} fill className="object-cover transition duration-200 group-hover:scale-105" sizes="(max-width: 1023px) 80px, 152px" />
         </button>
         <button type="button" onClick={onSelect} disabled={disabled} className="grid min-w-0 grid-cols-[1fr_auto] gap-3 rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-[#c6a76a]/30">
           <span className="min-w-0">
