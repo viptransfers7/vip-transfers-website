@@ -14,23 +14,23 @@ export function ServiceStep({ serviceType, setServiceType }: { serviceType: Serv
   const selectedService = services.find((service) => service.type === serviceType) || services[0];
 
   return (
-    <section className="bg-white">
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+    <section>
+      <div>
         <div>
-          <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs md:tracking-[0.16em]">Service</div>
-          <h1 className="mt-1 text-xl font-black leading-tight md:text-2xl">Book your chauffeur</h1>
-          <p className="mt-1 text-sm leading-5 text-neutral-500 sm:hidden">{selectedService.copy}</p>
+          <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs md:tracking-[0.16em]">Book a chauffeur</div>
+          <h1 className="serif-title mt-2 max-w-3xl text-[2rem] leading-[0.98] tracking-normal text-ink md:text-5xl">Where to, and when?</h1>
+          <p className="mt-2 max-w-[310px] text-sm leading-5 text-neutral-500 sm:hidden">Chauffeured rides across Korea · 3-hour lead time</p>
         </div>
-        <p className="hidden max-w-sm text-sm leading-6 text-neutral-600 sm:block">{selectedService.copy}</p>
+        <p className="mt-3 hidden max-w-xl text-sm leading-6 text-neutral-600 sm:block">{selectedService.copy}</p>
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
         {services.map((service) => (
           <button
             key={service.type}
             type="button"
             onClick={() => setServiceType(service.type)}
-            className={`min-h-9 shrink-0 rounded-md px-3 py-2 text-left text-[13px] font-black transition md:min-h-10 md:px-4 md:text-sm ${
-              serviceType === service.type ? "bg-black text-white" : "bg-neutral-100 text-neutral-600 hover:bg-ivory hover:text-black"
+            className={`min-h-10 shrink-0 rounded-full border px-4 py-2 text-left text-[13px] font-black transition md:min-h-11 md:px-5 md:text-sm ${
+              serviceType === service.type ? "border-ink bg-ink text-white" : "hairline bg-white text-neutral-700 hover:border-neutral-300 hover:text-black"
             }`}
           >
             <span className="sm:hidden">{service.shortTitle}</span>

@@ -2,7 +2,6 @@
 
 import type { BookingPayload, GuestDetails } from "@/lib/booking/types";
 import type { QuoteResponse } from "@/lib/pricing/types";
-import { AirportMeetingNotice } from "./AirportMeetingNotice";
 import { GuestStep } from "./GuestStep";
 import { QuoteSummary } from "./QuoteSummary";
 
@@ -29,28 +28,43 @@ export function ConfirmStep({
   const cannotSubmit = submitting || !quote || (!quote.available && !quote.requiresCustomQuote);
 
   const rows = [
-    ["Service", payload.serviceType.replace(/_/g, " ")],
-    ["Pickup", `${payload.pickupDate} ${payload.pickupTime}`],
-    ["Route", `${payload.pickupLocation} to ${payload.dropoffLocation}`],
-    ...(payload.serviceType === "airport_transfer" ? [["Airport ride", payload.airportDirection === "departure" ? "To airport" : "From airport"]] : []),
-    ...(payload.flightNumber ? [["Flight", payload.flightNumber]] : []),
-    ...(returnRoute ? [["Return", returnRoute]] : []),
-    ["Passengers", `${payload.passengers} pax / ${payload.luggage} luggage`],
-    ...(payload.requestedVehicleTypeName ? [["Vehicle type", payload.requestedVehicleTypeName]] : []),
-    ["Vehicle option", payload.vehicleName]
+    ["Vehicle", payload.vehicleName],
+    ["Guests", `${payload.passengers} pax / ${payload.luggage} luggage`],
+    ...(payload.serviceType === "airport_transfer" ? [["Chauffeur", payload.airportDirection === "arrival" ? "Meet & greet" : "Private departure transfer"]] : []),
+    ...(returnRoute ? [["Return", returnRoute]] : [])
   ];
 
   return (
     <div>
-      <h1 className="text-xl font-black leading-tight md:text-2xl">Confirm booking</h1>
+      <h1 className="text-3xl font-black leading-tight text-ink md:text-4xl">Almost there</h1>
+      <p className="mt-2 text-sm font-semibold leading-6 text-neutral-500">Review your ride and add guest details.</p>
       <div className="mt-4 grid gap-4 md:mt-5 md:gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-4 md:gap-5">
-          <div className="rounded-xl border hairline bg-white p-4 md:p-5">
-            <GuestStep guest={guest} setGuest={setGuest} compact />
-          </div>
           <div className="overflow-hidden rounded-xl border hairline bg-white">
-            <div className="px-4 pt-4 text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:px-5 md:text-xs md:tracking-[0.16em]">Review</div>
-            <div className="mt-3 grid text-sm">
+            <div className="p-4 md:p-5">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-black text-[#8f7241]">
+                {payload.airport ? <span className="rounded-full bg-[#f5efe2] px-2.5 py-1">{payload.airport} · {payload.airport === "GMP" ? "Gimpo" : "Incheon"}</span> : null}
+                <span className="text-neutral-300">to</span>
+                <span className="text-ink">{shortPlace(payload.dropoffLocation)}</span>
+              </div>
+              <div className="mt-4 relative grid gap-3 pl-6 text-sm">
+                <span className="absolute bottom-4 left-[5px] top-2 w-px bg-neutral-200" />
+                <div className="relative">
+                  <span className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-full bg-ink" />
+                  <div className="font-black text-ink">{shortPlace(payload.pickupLocation)}</div>
+                  <div className="mt-0.5 text-xs font-semibold text-neutral-400">
+                    {payload.pickupDate} · {payload.pickupTime}
+                    {payload.flightNumber ? ` · ${payload.flightNumber}` : ""}
+                  </div>
+                </div>
+                <div className="relative">
+                  <span className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-sm bg-[#b8955a]" />
+                  <div className="font-black text-ink">{shortPlace(payload.dropoffLocation)}</div>
+                  <div className="mt-0.5 text-xs font-semibold text-neutral-400">{payload.dropoffPlace?.formattedAddress || `${payload.passengers} pax · ${payload.luggage} luggage`}</div>
+                </div>
+              </div>
+            </div>
+            <div className="grid text-sm">
               {rows.map(([label, value]) => (
                 <div key={label} className="grid gap-1 border-t hairline px-4 py-3 sm:grid-cols-[120px_1fr] md:px-5">
                   <div className="text-xs font-bold text-neutral-500">{label}</div>
@@ -58,11 +72,9 @@ export function ConfirmStep({
                 </div>
               ))}
             </div>
-            {payload.serviceType === "airport_transfer" ? (
-              <div className="px-4 pb-4 md:px-5">
-                <AirportMeetingNotice direction={payload.airportDirection} />
-              </div>
-            ) : null}
+          </div>
+          <div className="rounded-xl border hairline bg-white p-4 md:p-5">
+            <GuestStep guest={guest} setGuest={setGuest} compact />
           </div>
         </div>
         <aside className="grid content-start gap-4 xl:sticky xl:top-28">
@@ -84,4 +96,8 @@ export function ConfirmStep({
       </div>
     </div>
   );
+}
+
+function shortPlace(value: string) {
+  return value.replace("International Airport Terminal", "Intl Airport · T").replace("International Airport", "Intl Airport");
 }

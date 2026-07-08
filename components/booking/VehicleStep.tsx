@@ -11,12 +11,14 @@ export function VehicleStep({
   selectedVehicleCode,
   setSelectedVehicleCode,
   quotes,
-  loading
+  loading,
+  tripSummary
 }: {
   selectedVehicleCode: string;
   setSelectedVehicleCode: (code: string) => void;
   quotes: Record<string, QuoteResponse>;
   loading: boolean;
+  tripSummary: string;
 }) {
   const selectedQuote = quotes[selectedVehicleCode] || null;
   const [previewVehicle, setPreviewVehicle] = useState<VehiclePricing | null>(null);
@@ -25,8 +27,8 @@ export function VehicleStep({
     <div>
       <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end md:gap-4">
         <div>
-          <h1 className="text-xl font-black leading-tight md:text-2xl">Choose vehicle</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-600">Choose the vehicle that best fits your guests and luggage.</p>
+          <h1 className="text-3xl font-black leading-tight text-ink md:text-4xl">Choose your vehicle</h1>
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-neutral-500">{tripSummary}</p>
         </div>
         {loading ? <span className="text-sm font-bold text-[#9a7b41]">Calculating quotes...</span> : null}
       </div>

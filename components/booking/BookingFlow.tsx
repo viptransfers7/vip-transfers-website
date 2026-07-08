@@ -254,41 +254,54 @@ export function BookingFlow() {
   const isFinalStep = step === bookingSteps.length - 1;
   const finalActionDisabled = submitting || !selectedQuote || (!selectedQuote.available && !selectedQuote.requiresCustomQuote);
   const finalActionLabel = submitting ? "Processing..." : selectedQuote?.requiresCustomQuote ? "Submit quote request" : "Continue to payment";
+  const nextActionLabel = !isFinalStep ? nextLabels[step] : finalActionLabel;
+  const stickyPriceLabel = selectedQuote?.available ? `$${selectedQuote.finalPrice}` : selectedQuote?.requiresCustomQuote ? "Custom" : "Quote";
 
   return (
-    <div className="overflow-hidden rounded-lg border hairline bg-white shadow-soft">
-      <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} />
-      <section className="p-3 sm:p-4 md:p-6 lg:p-8">
-        {error ? <div className="mb-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}
-        {step === 0 ? (
-          <div className="grid gap-4 md:gap-5">
-            <ServiceStep serviceType={serviceType} setServiceType={setServiceType} />
-            <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
-          </div>
-        ) : null}
-        {step === 1 ? <VehicleStep selectedVehicleCode={vehicleCode} setSelectedVehicleCode={setVehicleCode} quotes={quotes} loading={quoteLoading} /> : null}
-        {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
-        <div className="sticky bottom-0 -mx-3 mt-6 flex items-center justify-between gap-3 border-t hairline bg-white/95 px-3 py-3 backdrop-blur sm:-mx-4 sm:px-4 md:-mx-6 md:mt-8 md:px-6 lg:-mx-8 lg:px-8">
-          <div className="hidden min-w-0 text-sm md:block">
-            <div className="truncate font-bold">{selectedVehicle.vehicleName}</div>
-            <div className="text-xs text-neutral-500">{selectedQuote?.available ? `$${selectedQuote.finalPrice} instant quote` : selectedQuote?.requiresCustomQuote ? "Custom quote" : "Quote pending"}</div>
-          </div>
-          <div className="ml-auto flex gap-2.5 md:gap-3">
-            <button type="button" className="btn" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>
-              Back
-            </button>
+    <div className="min-h-[calc(100vh-104px)] overflow-hidden bg-[#fbfaf7] shadow-[0_16px_44px_rgba(10,10,11,.07)] sm:rounded-lg">
+      <div className={step === 0 ? "xl:grid xl:grid-cols-[minmax(0,1fr)_360px]" : ""}>
+        <section className="px-5 pb-28 pt-5 sm:px-7 sm:pt-7 md:px-10 md:pb-0 md:pt-9 lg:px-14">
+          <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} onBack={() => setStep(Math.max(0, step - 1))} />
+          {error ? <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}
+          {step === 0 ? (
+            <div className="grid gap-5 md:gap-7">
+              <ServiceStep serviceType={serviceType} setServiceType={setServiceType} />
+              <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
+            </div>
+          ) : null}
+          {step === 1 ? <VehicleStep selectedVehicleCode={vehicleCode} setSelectedVehicleCode={setVehicleCode} quotes={quotes} loading={quoteLoading} tripSummary={`${trip.pickupLocation} to ${trip.dropoffLocation} · ${trip.passengers} pax · ${trip.luggage} luggage`} /> : null}
+          {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
+          <div className={`fixed bottom-0 left-0 right-0 z-40 items-center justify-between gap-3 border-t hairline bg-[#fbfaf7]/95 px-5 py-3 shadow-[0_-12px_30px_rgba(10,10,11,.08)] backdrop-blur md:sticky md:-mx-10 md:mt-9 md:px-10 md:shadow-none lg:-mx-14 lg:px-14 ${step === 0 ? "flex xl:hidden" : "flex"}`}>
+            <div className="min-w-0">
+              <div className="text-[10px] font-black uppercase tracking-[0.12em] text-neutral-400">Estimated</div>
+              <div className="mt-0.5 flex items-baseline gap-1">
+                <span className="font-mono text-xl font-semibold text-ink">{stickyPriceLabel}</span>
+                <span className="text-xs font-semibold text-neutral-500">{selectedQuote?.available ? "from" : selectedQuote?.requiresCustomQuote ? "quote" : "pending"}</span>
+              </div>
+            </div>
             {!isFinalStep ? (
-              <button type="button" className="btn btn-dark" onClick={() => setStep(Math.min(bookingSteps.length - 1, step + 1))}>
-                {nextLabels[step]}
+              <button type="button" className="btn btn-dark btn-pill min-w-[168px]" onClick={() => setStep(Math.min(bookingSteps.length - 1, step + 1))}>
+                {nextActionLabel}
               </button>
             ) : (
-              <button type="button" className="btn btn-dark" onClick={submitBooking} disabled={finalActionDisabled}>
-                {finalActionLabel}
+              <button type="button" className="btn btn-dark btn-pill min-w-[168px]" onClick={submitBooking} disabled={finalActionDisabled}>
+                {nextActionLabel}
               </button>
             )}
           </div>
-        </div>
-      </section>
+        </section>
+        {step === 0 ? (
+          <aside className="hidden border-l hairline bg-white/72 p-8 xl:block">
+            <TripSummaryCard
+              payload={payload}
+              quote={selectedQuote}
+              vehicleName={selectedVehicle.vehicleName}
+              quoteLoading={quoteLoading}
+              onAction={() => setStep(1)}
+            />
+          </aside>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -307,4 +320,83 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
   }
 
   return result as T;
+}
+
+function TripSummaryCard({
+  payload,
+  quote,
+  vehicleName,
+  quoteLoading,
+  onAction
+}: {
+  payload: BookingPayload;
+  quote: QuoteResponse | null;
+  vehicleName: string;
+  quoteLoading: boolean;
+  onAction: () => void;
+}) {
+  return (
+    <div className="sticky top-28 rounded-xl border hairline bg-white p-5 shadow-[0_10px_32px_rgba(10,10,11,.05)]">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-base font-black text-ink">Trip summary</h2>
+        {payload.isRoundTrip ? <span className="rounded-full bg-[#f5efe2] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-[#9a7b41]">Round trip · -10%</span> : null}
+      </div>
+      <div className="mt-5 grid gap-4 text-sm">
+        <div className="relative grid gap-3 pl-6">
+          <span className="absolute bottom-4 left-[5px] top-2 w-px bg-neutral-200" />
+          <div className="relative">
+            <span className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-full bg-ink" />
+            <div className="font-black text-ink">{shortPlace(payload.pickupLocation)}</div>
+            <div className="mt-0.5 text-xs font-semibold text-neutral-400">
+              {payload.pickupDate} · {payload.pickupTime}
+              {payload.flightNumber ? ` · ${payload.flightNumber}` : ""}
+            </div>
+          </div>
+          <div className="relative">
+            <span className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-sm bg-[#b8955a]" />
+            <div className="font-black text-ink">{shortPlace(payload.dropoffLocation)}</div>
+            <div className="mt-0.5 text-xs font-semibold text-neutral-400">
+              {payload.passengers} pax · {payload.luggage} luggage
+            </div>
+          </div>
+        </div>
+        <div className="border-t hairline pt-4">
+          <div className="flex justify-between gap-4">
+            <span className="text-neutral-500">{formatService(payload.serviceType)}</span>
+            <span className="text-right font-semibold text-ink">{quoteLoading ? "Calculating" : quote?.available ? "Instant quote" : quote?.requiresCustomQuote ? "Custom quote" : "Pending"}</span>
+          </div>
+          <div className="mt-3 flex justify-between gap-4">
+            <span className="text-neutral-500">Vehicle</span>
+            <span className="text-right font-semibold text-ink">{vehicleName}</span>
+          </div>
+        </div>
+        {quote?.available ? (
+          <div className="border-t hairline pt-4">
+            {quote.breakdown.slice(0, 3).map((item) => (
+              <div key={item.label} className="mb-2 flex justify-between gap-4 text-sm">
+                <span className="text-neutral-500">{item.label}</span>
+                <span className="font-mono font-semibold text-ink">{item.amount < 0 ? "-" : ""}${Math.abs(item.amount)}</span>
+              </div>
+            ))}
+            <div className="mt-4 flex items-end justify-between gap-4">
+              <span className="font-black text-ink">Total</span>
+              <span className="font-mono text-2xl font-semibold text-ink">${quote.finalPrice}</span>
+            </div>
+          </div>
+        ) : null}
+      </div>
+      <button type="button" onClick={onAction} className="btn btn-dark btn-pill mt-6 w-full">
+        Choose vehicle
+      </button>
+      <p className="mt-4 text-xs font-semibold leading-5 text-neutral-400">Free cancellation up to 24h · Fixed price after confirmation</p>
+    </div>
+  );
+}
+
+function shortPlace(value: string) {
+  return value.replace("International Airport Terminal", "Intl Airport · T").replace("International Airport", "Intl Airport");
+}
+
+function formatService(serviceType: string) {
+  return serviceType.replace(/_/g, " ");
 }

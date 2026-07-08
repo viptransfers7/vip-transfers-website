@@ -3,7 +3,6 @@
 import type { ReactNode } from "react";
 import { tourProducts } from "@/lib/pricing/tourProducts";
 import type { AirportDirection, PlaceSnapshot, ServiceType } from "@/lib/pricing/types";
-import { AirportMeetingNotice } from "./AirportMeetingNotice";
 import { LocationInput } from "./LocationInput";
 
 export type TripForm = {
@@ -72,6 +71,16 @@ export function TripDetailsStep({
     });
   }
 
+  function swapLocations() {
+    setTrip({
+      pickupLocation: trip.dropoffLocation,
+      dropoffLocation: trip.pickupLocation,
+      pickupPlace: trip.dropoffPlace,
+      dropoffPlace: trip.pickupPlace,
+      airportDirection: trip.airportDirection === "arrival" ? "departure" : "arrival"
+    });
+  }
+
   function updateRoundTrip(checked: boolean) {
     setTrip({
       isRoundTrip: checked,
@@ -88,13 +97,9 @@ export function TripDetailsStep({
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-black leading-tight md:text-2xl">Ride details</h2>
-        {detectedAirport ? <span className="rounded-full bg-[#f5efe2] px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#8f7241]">{detectedAirport}</span> : null}
-      </div>
-      <div className="mt-3 grid grid-cols-2 gap-3 md:mt-5 md:gap-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
         {isAirport ? (
-          <div className="col-span-2 grid grid-cols-2 rounded-xl bg-neutral-100 p-1 text-sm font-bold" aria-label="Airport ride direction">
+          <div className="col-span-2 grid grid-cols-2 rounded-xl bg-[#f1eee8] p-1 text-sm font-bold" aria-label="Airport ride direction">
             {[
               ["arrival", "Arriving in Korea"],
               ["departure", "Departing Korea"]
@@ -114,6 +119,14 @@ export function TripDetailsStep({
         <div className="col-span-2 overflow-hidden rounded-xl border hairline bg-white px-4">
           <div className="relative">
             <div className="absolute bottom-9 left-[10px] top-9 w-px bg-neutral-200" />
+            <button
+              type="button"
+              onClick={swapLocations}
+              className="absolute right-0 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border hairline bg-white text-[10px] font-black uppercase text-neutral-600 shadow-[0_4px_14px_rgba(10,10,11,.05)] sm:flex"
+              aria-label="Swap pickup and dropoff"
+            >
+              Swap
+            </button>
             <LocationInput
               variant="route"
               marker="pickup"
@@ -136,13 +149,25 @@ export function TripDetailsStep({
           </div>
         </div>
 
-        <div className="col-span-2 grid gap-3 sm:grid-cols-2">
+        {detectedAirport ? (
+          <div className="col-span-2 -mt-1 flex items-center gap-2 text-xs font-semibold text-neutral-500">
+            <span>Airport detected</span>
+            <span className="rounded-full bg-[#f5efe2] px-2.5 py-1 font-black text-[#8f7241]">{detectedAirport} · {detectedAirport === "GMP" ? "Gimpo" : "Incheon"}</span>
+          </div>
+        ) : null}
+
+        <div className={`col-span-2 grid grid-cols-2 overflow-hidden rounded-xl border hairline bg-white ${isAirport ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
           <CompactField label="Date">
             <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="date" min={minDate} value={trip.pickupDate} onChange={(event) => setTrip({ pickupDate: event.target.value })} />
           </CompactField>
           <CompactField label="Time">
             <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="time" min={minTime} value={trip.pickupTime} onChange={(event) => setTrip({ pickupTime: event.target.value })} />
           </CompactField>
+          {isAirport ? (
+            <CompactField label={trip.airportDirection === "arrival" ? "Arrival flight" : "Departure flight"} className="col-span-2 sm:col-span-1">
+              <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none placeholder:text-neutral-400" placeholder={trip.airportDirection === "arrival" ? "KE 086" : "KE 085"} value={trip.flightNumber} onChange={(event) => setTrip({ flightNumber: event.target.value })} />
+            </CompactField>
+          ) : null}
         </div>
 
         {isHourly ? (
@@ -169,13 +194,6 @@ export function TripDetailsStep({
           </label>
         ) : null}
 
-        {isAirport ? (
-          <label className="col-span-2 grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
-            {trip.airportDirection === "arrival" ? "Arrival flight number" : "Departure flight number"}
-            <input className="field font-mono" placeholder={trip.airportDirection === "arrival" ? "KE082, OZ202..." : "KE085, OZ203..."} value={trip.flightNumber} onChange={(event) => setTrip({ flightNumber: event.target.value })} />
-          </label>
-        ) : null}
-
         {!isAirport ? (
           <label className="col-span-2 grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
             Stopover
@@ -190,59 +208,75 @@ export function TripDetailsStep({
           </label>
         ) : null}
 
-        <StepperField label="Passengers" value={trip.passengers} min={1} onChange={(passengers) => setTrip({ passengers })} />
-        <StepperField label="Luggage" value={trip.luggage} min={0} onChange={(luggage) => setTrip({ luggage })} />
+        <div className="col-span-2 grid overflow-hidden rounded-xl border hairline bg-white sm:grid-cols-2">
+          <StepperField label="Passengers" hint="Including children" value={trip.passengers} min={1} onChange={(passengers) => setTrip({ passengers })} />
+          <StepperField label="Luggage" hint="Check-in size" value={trip.luggage} min={0} onChange={(luggage) => setTrip({ luggage })} />
+        </div>
 
         {isAirport ? (
-          <label className="col-span-2 flex items-center justify-between gap-3 rounded-xl bg-[#fbfaf7] px-4 py-3 text-[13px] font-bold md:text-sm">
-            <span className="flex min-w-0 items-center gap-2.5">
-              <input className="accent-black" type="checkbox" checked={trip.isRoundTrip} onChange={(event) => updateRoundTrip(event.target.checked)} />
-              <span>Add return trip</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={trip.isRoundTrip}
+            onClick={() => updateRoundTrip(!trip.isRoundTrip)}
+            className={`col-span-2 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition ${
+              trip.isRoundTrip ? "border-[#e4d5b9] bg-[#f5efe2]" : "hairline bg-[#fbfaf7]"
+            }`}
+          >
+            <span className="grid min-w-0 gap-0.5">
+              <span className="text-sm font-black text-ink">Add return trip</span>
+              <span className="text-xs font-semibold text-[#9a7b41]">Save 10% on airport round trip</span>
             </span>
-            <span className="shrink-0 text-xs text-[#9a7b41] md:text-sm">Save 10%</span>
-          </label>
+            <span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 transition ${trip.isRoundTrip ? "bg-ink" : "bg-neutral-300"}`}>
+              <span className={`h-5 w-5 rounded-full bg-white transition ${trip.isRoundTrip ? "translate-x-5" : ""}`} />
+            </span>
+          </button>
         ) : null}
 
         {isAirport && trip.isRoundTrip ? (
           <>
             <div className="col-span-2 mt-1 border-t hairline pt-5">
-              <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs">Return transfer</div>
-              <p className="mt-2 text-sm leading-6 text-neutral-600">Return airport can be different, such as arrival at ICN and departure from GMP.</p>
+              <div className="text-[11px] font-black uppercase tracking-[0.14em] text-neutral-500 md:text-xs">Return trip · different airport allowed</div>
             </div>
-            <LocationInput
-              label="Return pickup location"
-              value={trip.returnPickupLocation}
-              onChange={(value) => setTrip({ returnPickupLocation: value })}
-              onPlaceSelect={(place) => setTrip({ returnPickupPlace: place })}
-              placeholder="Hotel, address, venue..."
-            />
-            <LocationInput
-              label="Return dropoff airport"
-              value={trip.returnDropoffLocation}
-              onChange={(value) => setTrip({ returnDropoffLocation: value })}
-              onPlaceSelect={(place) => setTrip({ returnDropoffPlace: place })}
-              placeholder="Gimpo Airport, Incheon Airport Terminal 2..."
-            />
-            <label className="grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
-              Return date
-              <input className="field font-mono" type="date" min={trip.pickupDate || minDate} value={trip.returnDate} onChange={(event) => setTrip({ returnDate: event.target.value })} />
-            </label>
-            <label className="grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
-              Return time
-              <input className="field font-mono" type="time" value={trip.returnTime} onChange={(event) => setTrip({ returnTime: event.target.value })} />
-            </label>
-            <label className="col-span-2 grid gap-1.5 text-[13px] font-bold md:gap-2 md:text-sm">
-              Return departure flight
-              <input className="field font-mono" placeholder="KE085, OZ203..." value={trip.returnFlight} onChange={(event) => setTrip({ returnFlight: event.target.value })} />
-            </label>
+            <div className="col-span-2 overflow-hidden rounded-xl border hairline bg-white px-4">
+              <div className="relative">
+                <div className="absolute bottom-9 left-[10px] top-9 w-px bg-neutral-200" />
+                <LocationInput
+                  variant="route"
+                  marker="pickup"
+                  label="Pickup"
+                  value={trip.returnPickupLocation}
+                  onChange={(value) => setTrip({ returnPickupLocation: value })}
+                  onPlaceSelect={(place) => setTrip({ returnPickupPlace: place })}
+                  placeholder="Hotel, address, venue..."
+                />
+                <div className="-mx-4 border-t hairline" />
+                <LocationInput
+                  variant="route"
+                  marker="dropoff"
+                  label="Dropoff"
+                  value={trip.returnDropoffLocation}
+                  onChange={(value) => setTrip({ returnDropoffLocation: value })}
+                  onPlaceSelect={(place) => setTrip({ returnDropoffPlace: place })}
+                  placeholder="Gimpo Airport, Incheon Airport Terminal 2..."
+                />
+              </div>
+            </div>
+            <div className="col-span-2 grid grid-cols-2 overflow-hidden rounded-xl border hairline bg-white sm:grid-cols-3">
+              <CompactField label="Return date">
+                <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="date" min={trip.pickupDate || minDate} value={trip.returnDate} onChange={(event) => setTrip({ returnDate: event.target.value })} />
+              </CompactField>
+              <CompactField label="Time">
+                <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none" type="time" value={trip.returnTime} onChange={(event) => setTrip({ returnTime: event.target.value })} />
+              </CompactField>
+              <CompactField label="Return flight" className="col-span-2 sm:col-span-1">
+                <input className="w-full bg-transparent p-0 font-mono text-[15px] font-semibold text-ink outline-none placeholder:text-neutral-400" placeholder="KE 085" value={trip.returnFlight} onChange={(event) => setTrip({ returnFlight: event.target.value })} />
+              </CompactField>
+            </div>
           </>
         ) : null}
       </div>
-      {isAirport ? (
-        <div className="mt-4 md:mt-6">
-          <AirportMeetingNotice direction={trip.airportDirection} />
-        </div>
-      ) : null}
+      {isAirport ? <p className="mt-4 text-xs font-semibold leading-5 text-neutral-500">Flight tracking and meet-and-greet are included for airport transfers.</p> : null}
     </div>
   );
 }
@@ -264,25 +298,28 @@ function getAirportCodeFromTrip(pickupLocation: string, dropoffLocation: string)
   return "";
 }
 
-function CompactField({ label, children }: { label: string; children: ReactNode }) {
+function CompactField({ label, children, className = "" }: { label: string; children: ReactNode; className?: string }) {
   return (
-    <label className="grid gap-2 rounded-xl border hairline bg-white px-4 py-3">
+    <label className={`grid gap-2 border-b border-r hairline px-4 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 ${className}`}>
       <span className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">{label}</span>
       {children}
     </label>
   );
 }
 
-function StepperField({ label, value, min, onChange }: { label: string; value: number; min: number; onChange: (value: number) => void }) {
+function StepperField({ label, hint, value, min, onChange }: { label: string; hint: string; value: number; min: number; onChange: (value: number) => void }) {
   return (
-    <div className="grid gap-2 rounded-xl border hairline bg-white px-4 py-3">
-      <div className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">{label}</div>
-      <div className="flex items-center justify-between gap-3">
-        <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 text-lg font-black text-neutral-500 transition hover:bg-neutral-200" onClick={() => onChange(Math.max(min, value - 1))}>
+    <div className="grid grid-cols-[1fr_auto] items-center gap-3 border-b hairline px-4 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0">
+      <div>
+        <div className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">{label}</div>
+        <div className="mt-0.5 text-xs font-semibold text-neutral-400">{hint}</div>
+      </div>
+      <div className="flex items-center gap-3">
+        <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full border hairline bg-white text-lg font-black text-neutral-500 transition hover:bg-neutral-50" onClick={() => onChange(Math.max(min, value - 1))}>
           -
         </button>
         <span className="font-mono text-lg font-semibold text-ink">{value}</span>
-        <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-lg font-black text-white transition hover:bg-charcoal" onClick={() => onChange(value + 1)}>
+        <button type="button" className="flex h-8 w-8 items-center justify-center rounded-full border hairline bg-white text-lg font-black text-ink transition hover:bg-neutral-50" onClick={() => onChange(value + 1)}>
           +
         </button>
       </div>

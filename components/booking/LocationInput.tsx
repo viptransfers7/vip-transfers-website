@@ -121,10 +121,7 @@ export function LocationInput({
           <span className={`h-2.5 w-2.5 rounded-full ${marker === "pickup" ? "bg-ink" : "border-2 border-ink bg-white"}`} />
         </span>
         <span className="grid min-w-0 gap-1">
-          <span className="flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">
-            {label}
-            <span className="hidden font-bold text-neutral-300 sm:inline">{placesReady ? "Google Places" : "Suggested"}</span>
-          </span>
+          <span className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">{label}</span>
           {input}
         </span>
       </label>
