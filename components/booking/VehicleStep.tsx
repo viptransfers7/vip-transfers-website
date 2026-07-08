@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import type { BookingPayload } from "@/lib/booking/types";
 import { vehiclePricing } from "@/lib/pricing/pricingData";
 import type { QuoteResponse, VehiclePricing } from "@/lib/pricing/types";
 import { QuoteSummary } from "./QuoteSummary";
@@ -12,13 +13,17 @@ export function VehicleStep({
   setSelectedVehicleCode,
   quotes,
   loading,
-  tripSummary
+  tripSummary,
+  payload,
+  selectedVehicleName
 }: {
   selectedVehicleCode: string;
   setSelectedVehicleCode: (code: string) => void;
   quotes: Record<string, QuoteResponse>;
   loading: boolean;
   tripSummary: string;
+  payload: BookingPayload;
+  selectedVehicleName?: string;
 }) {
   const selectedQuote = quotes[selectedVehicleCode] || null;
   const [previewVehicle, setPreviewVehicle] = useState<VehiclePricing | null>(null);
@@ -45,11 +50,105 @@ export function VehicleStep({
             />
           ))}
         </div>
-        <div className="xl:sticky xl:top-28 xl:self-start">
-          <QuoteSummary quote={selectedQuote} />
-        </div>
+        <aside className="order-first grid gap-3 xl:order-none xl:sticky xl:top-28 xl:self-start">
+          <VehicleTripSummary payload={payload} quote={selectedQuote} quoteLoading={loading} vehicleName={selectedVehicleName} />
+          {selectedQuote ? <QuoteSummary quote={selectedQuote} /> : null}
+        </aside>
       </div>
       {previewVehicle ? <VehiclePreview vehicle={previewVehicle} selected={selectedVehicleCode === previewVehicle.vehicleCode} onClose={() => setPreviewVehicle(null)} onSelect={() => setSelectedVehicleCode(previewVehicle.vehicleCode)} /> : null}
+    </div>
+  );
+}
+
+function VehicleTripSummary({
+  payload,
+  quote,
+  quoteLoading,
+  vehicleName
+}: {
+  payload: BookingPayload;
+  quote: QuoteResponse | null;
+  quoteLoading: boolean;
+  vehicleName?: string;
+}) {
+  const hasReturnRoute = Boolean(payload.isRoundTrip && payload.returnPickupLocation && payload.returnDropoffLocation);
+
+  return (
+    <div className="rounded-xl border hairline bg-white p-4 shadow-[0_10px_32px_rgba(10,10,11,.04)] md:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="text-base font-black text-ink">Trip summary</h2>
+        {payload.isRoundTrip ? <span className="rounded-full bg-[#f5efe2] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-[#9a7b41]">Round trip</span> : null}
+      </div>
+
+      <div className="mt-4 grid gap-4 text-sm">
+        <RouteTimeline
+          pickup={payload.pickupLocation}
+          dropoff={payload.dropoffLocation}
+          meta={`${payload.pickupDate} · ${payload.pickupTime}${payload.flightNumber ? ` · ${payload.flightNumber}` : ""}`}
+          detail={`${payload.passengers} pax · ${payload.luggage} luggage`}
+        />
+
+        {hasReturnRoute ? (
+          <div className="rounded-xl bg-[#fbfaf7] p-3">
+            <div className="mb-3 text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">Return trip</div>
+            <RouteTimeline
+              pickup={payload.returnPickupLocation || ""}
+              dropoff={payload.returnDropoffLocation || ""}
+              meta={`${payload.returnDate || "Date pending"} · ${payload.returnTime || "Time pending"}${payload.returnFlight ? ` · ${payload.returnFlight}` : ""}`}
+              detail="Different airport allowed"
+              compact
+            />
+          </div>
+        ) : null}
+
+        <div className="grid gap-3 border-t hairline pt-4">
+          <SummaryRow label="Service" value={formatService(payload.serviceType)} />
+          {payload.serviceType === "airport_transfer" ? <SummaryRow label="Direction" value={payload.airportDirection === "departure" ? "Departing Korea" : "Arriving in Korea"} /> : null}
+          <SummaryRow label="Vehicle" value={vehicleName || "Select vehicle next"} strong />
+          <SummaryRow label="Quote" value={getQuoteStatus({ quote, quoteLoading, vehicleName })} strong />
+        </div>
+
+        <p className="text-xs font-semibold leading-5 text-neutral-400">Free cancellation up to 24h · Fixed price after confirmation</p>
+      </div>
+    </div>
+  );
+}
+
+function RouteTimeline({
+  pickup,
+  dropoff,
+  meta,
+  detail,
+  compact = false
+}: {
+  pickup: string;
+  dropoff: string;
+  meta: string;
+  detail: string;
+  compact?: boolean;
+}) {
+  return (
+    <div className={`relative grid pl-6 ${compact ? "gap-2" : "gap-3"}`}>
+      <span className="absolute bottom-4 left-[5px] top-2 w-px bg-neutral-200" />
+      <div className="relative min-w-0">
+        <span className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-full bg-ink" />
+        <div className="truncate font-black text-ink">{shortPlace(pickup)}</div>
+        <div className="mt-0.5 text-xs font-semibold text-neutral-400">{meta}</div>
+      </div>
+      <div className="relative min-w-0">
+        <span className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-sm bg-[#b8955a]" />
+        <div className="truncate font-black text-ink">{shortPlace(dropoff)}</div>
+        <div className="mt-0.5 text-xs font-semibold text-neutral-400">{detail}</div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryRow({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="text-neutral-500">{label}</span>
+      <span className={`text-right ${strong ? "font-black text-ink" : "font-semibold text-neutral-700"}`}>{value}</span>
     </div>
   );
 }
@@ -96,4 +195,20 @@ function VehiclePreview({ vehicle, selected, onClose, onSelect }: { vehicle: Veh
       </div>
     </div>
   );
+}
+
+function getQuoteStatus({ quote, quoteLoading, vehicleName }: { quote: QuoteResponse | null; quoteLoading: boolean; vehicleName?: string }) {
+  if (!vehicleName) return "After vehicle";
+  if (quote?.available) return "Instant quote";
+  if (quote?.requiresCustomQuote) return "Custom quote";
+  if (quoteLoading) return "Checking route";
+  return "Review required";
+}
+
+function shortPlace(value: string) {
+  return value.replace("International Airport Terminal", "Intl Airport · T").replace("International Airport", "Intl Airport");
+}
+
+function formatService(serviceType: string) {
+  return serviceType.replace(/_/g, " ");
 }

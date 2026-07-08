@@ -26,7 +26,7 @@ export function VehicleCard({
           <Image src={vehicle.imageUrl} alt={vehicle.vehicleName} fill className="object-cover transition duration-200 group-hover:scale-105" sizes="(max-width: 768px) 72px, 132px" />
           <span className="absolute bottom-1.5 left-1.5 rounded-full bg-black/72 px-2 py-0.5 text-[10px] font-bold text-white opacity-90">View</span>
         </button>
-        <button type="button" onClick={onSelect} disabled={disabled} className="grid min-w-0 grid-cols-[1fr_auto] gap-3 text-left">
+        <button type="button" onClick={onSelect} disabled={disabled} className="grid min-w-0 grid-cols-[1fr_auto] gap-3 rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-[#c6a76a]/30">
           <span className="min-w-0">
             <span className="block truncate text-base font-black text-ink md:text-lg">{vehicle.vehicleName}</span>
             <span className="mt-0.5 block text-sm font-semibold text-neutral-400">{vehicle.category}</span>
@@ -37,7 +37,7 @@ export function VehicleCard({
           </span>
         </button>
       </div>
-      <button type="button" onClick={onSelect} disabled={disabled} className="mt-3 w-full text-left">
+      <button type="button" onClick={onSelect} disabled={disabled} className="mt-3 w-full rounded-lg text-left outline-none focus-visible:ring-2 focus-visible:ring-[#c6a76a]/30">
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-neutral-500 tabular-nums">
           <span>Up to {vehicle.maxPax}</span>
           <span className="text-neutral-300">|</span>

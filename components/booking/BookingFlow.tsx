@@ -300,7 +300,17 @@ export function BookingFlow() {
               <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
             </div>
           ) : null}
-          {step === 1 ? <VehicleStep selectedVehicleCode={vehicleCode} setSelectedVehicleCode={setVehicleCode} quotes={quotes} loading={quoteLoading} tripSummary={`${trip.pickupLocation} to ${trip.dropoffLocation} · ${trip.passengers} pax · ${trip.luggage} luggage`} /> : null}
+          {step === 1 ? (
+            <VehicleStep
+              selectedVehicleCode={vehicleCode}
+              setSelectedVehicleCode={setVehicleCode}
+              quotes={quotes}
+              loading={quoteLoading}
+              tripSummary={`${trip.pickupLocation} to ${trip.dropoffLocation} · ${trip.passengers} pax · ${trip.luggage} luggage`}
+              payload={payload}
+              selectedVehicleName={selectedVehicle?.vehicleName}
+            />
+          ) : null}
           {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
           <div className={`fixed bottom-0 left-0 right-0 z-40 items-center justify-between gap-3 border-t hairline bg-[#fbfaf7]/95 px-5 py-3 shadow-[0_-12px_30px_rgba(10,10,11,.08)] backdrop-blur md:sticky md:-mx-10 md:mt-9 md:px-10 md:shadow-none lg:-mx-14 lg:px-14 ${step === 0 ? "flex xl:hidden" : "flex"}`}>
             <div className="min-w-0">
