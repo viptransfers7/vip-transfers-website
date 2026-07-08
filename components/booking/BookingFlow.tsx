@@ -71,7 +71,7 @@ export function BookingFlow() {
   const [step, setStep] = useState(0);
   const [serviceType, setServiceType] = useState<ServiceType>("airport_transfer");
   const [trip, setTripState] = useState<TripForm>(initialTrip);
-  const [vehicleCode, setVehicleCode] = useState("g90");
+  const [vehicleCode, setVehicleCode] = useState("");
   const [guest, setGuestState] = useState<GuestDetails>(initialGuest);
   const [quotes, setQuotes] = useState<Record<string, QuoteResponse>>({});
   const [quoteLoading, setQuoteLoading] = useState(false);
@@ -79,8 +79,8 @@ export function BookingFlow() {
   const [error, setError] = useState("");
   const [minDateTime, setMinDateTime] = useState("");
 
-  const selectedVehicle = vehiclePricing.find((vehicle) => vehicle.vehicleCode === vehicleCode) || vehiclePricing[0];
-  const selectedQuote = quotes[vehicleCode] || null;
+  const selectedVehicle = vehiclePricing.find((vehicle) => vehicle.vehicleCode === vehicleCode) || null;
+  const selectedQuote = vehicleCode ? quotes[vehicleCode] || null : null;
 
   function setTrip(patch: Partial<TripForm>) {
     setTripState((current) => ({ ...current, ...patch }));
@@ -91,7 +91,7 @@ export function BookingFlow() {
   }
 
   const buildQuoteInput = useCallback(
-    (code = vehicleCode): QuoteInput => ({
+    (code: string): QuoteInput => ({
       serviceType,
       pickupDate: trip.pickupDate,
       pickupTime: trip.pickupTime,
@@ -118,7 +118,7 @@ export function BookingFlow() {
       luggage: trip.luggage,
       vehicleCode: code
     }),
-    [serviceType, trip, vehicleCode]
+    [serviceType, trip]
   );
 
   useEffect(() => {
@@ -210,10 +210,10 @@ export function BookingFlow() {
       passengers: trip.passengers,
       luggage: trip.luggage,
       vehicleCode,
-      vehicleName: selectedVehicle.vehicleName,
-      requestedVehicleTypeCode: selectedVehicle.vehicleTypeCode,
-      requestedVehicleTypeName: selectedVehicle.vehicleTypeName,
-      selectedVehicleOptionName: selectedVehicle.vehicleName,
+      vehicleName: selectedVehicle?.vehicleName || "",
+      requestedVehicleTypeCode: selectedVehicle?.vehicleTypeCode,
+      requestedVehicleTypeName: selectedVehicle?.vehicleTypeName,
+      selectedVehicleOptionName: selectedVehicle?.vehicleName,
       quoteAmountUsd: selectedQuote?.finalPrice || 0,
       quoteAmountKrw: Math.round((selectedQuote?.finalPrice || 0) * 1350),
       quoteBreakdown: selectedQuote?.breakdown || [],
@@ -269,10 +269,24 @@ export function BookingFlow() {
 
   const payload = buildPayload();
   const isFinalStep = step === bookingSteps.length - 1;
+  const canContinueFromCurrentStep = step !== 1 || Boolean(selectedQuote && (selectedQuote.available || selectedQuote.requiresCustomQuote));
   const finalActionDisabled = submitting || !selectedQuote || (!selectedQuote.available && !selectedQuote.requiresCustomQuote);
   const finalActionLabel = submitting ? "Processing..." : selectedQuote?.requiresCustomQuote ? "Submit quote request" : "Continue to payment";
-  const nextActionLabel = !isFinalStep ? nextLabels[step] : finalActionLabel;
-  const stickyPriceLabel = selectedQuote?.available ? `$${selectedQuote.finalPrice}` : selectedQuote?.requiresCustomQuote ? "Custom" : "Quote";
+  const nextActionLabel = !isFinalStep ? (step === 1 && !canContinueFromCurrentStep ? "Select vehicle" : nextLabels[step]) : finalActionLabel;
+  const stickyMeta =
+    step === 0
+      ? { eyebrow: "Price", value: "Not shown yet", subcopy: "" }
+      : selectedQuote?.available
+        ? { eyebrow: "Estimated", value: `$${selectedQuote.finalPrice}`, subcopy: "selected" }
+        : selectedQuote?.requiresCustomQuote
+          ? { eyebrow: "Quote", value: "Custom", subcopy: "review" }
+          : { eyebrow: "Price", value: "Not shown yet", subcopy: "" };
+  const stickyShowsPrice = Boolean(selectedQuote?.available || selectedQuote?.requiresCustomQuote);
+
+  function goToNextStep() {
+    if (!canContinueFromCurrentStep) return;
+    setStep(Math.min(bookingSteps.length - 1, step + 1));
+  }
 
   return (
     <div className="min-h-[calc(100vh-104px)] overflow-hidden bg-[#fbfaf7] shadow-[0_16px_44px_rgba(10,10,11,.07)] sm:rounded-lg">
@@ -290,14 +304,14 @@ export function BookingFlow() {
           {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
           <div className={`fixed bottom-0 left-0 right-0 z-40 items-center justify-between gap-3 border-t hairline bg-[#fbfaf7]/95 px-5 py-3 shadow-[0_-12px_30px_rgba(10,10,11,.08)] backdrop-blur md:sticky md:-mx-10 md:mt-9 md:px-10 md:shadow-none lg:-mx-14 lg:px-14 ${step === 0 ? "flex xl:hidden" : "flex"}`}>
             <div className="min-w-0">
-              <div className="text-[10px] font-black uppercase tracking-[0.12em] text-neutral-400">Estimated</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.12em] text-neutral-400">{stickyMeta.eyebrow}</div>
               <div className="mt-0.5 flex items-baseline gap-1">
-                <span className="font-mono text-xl font-semibold text-ink">{stickyPriceLabel}</span>
-                <span className="text-xs font-semibold text-neutral-500">{selectedQuote?.available ? "from" : selectedQuote?.requiresCustomQuote ? "quote" : "pending"}</span>
+                <span className={stickyShowsPrice ? "font-mono text-xl font-semibold text-ink" : "whitespace-nowrap text-sm font-black text-ink"}>{stickyMeta.value}</span>
+                {stickyMeta.subcopy ? <span className="text-xs font-semibold text-neutral-500">{stickyMeta.subcopy}</span> : null}
               </div>
             </div>
             {!isFinalStep ? (
-              <button type="button" className="btn btn-dark btn-pill min-w-[168px]" onClick={() => setStep(Math.min(bookingSteps.length - 1, step + 1))}>
+              <button type="button" className="btn btn-dark btn-pill min-w-[168px]" onClick={goToNextStep} disabled={!canContinueFromCurrentStep}>
                 {nextActionLabel}
               </button>
             ) : (
@@ -312,7 +326,7 @@ export function BookingFlow() {
             <TripSummaryCard
               payload={payload}
               quote={selectedQuote}
-              vehicleName={selectedVehicle.vehicleName}
+              vehicleName={selectedVehicle?.vehicleName}
               quoteLoading={quoteLoading}
               onAction={() => setStep(1)}
             />
@@ -348,7 +362,7 @@ function TripSummaryCard({
 }: {
   payload: BookingPayload;
   quote: QuoteResponse | null;
-  vehicleName: string;
+  vehicleName?: string;
   quoteLoading: boolean;
   onAction: () => void;
 }) {
@@ -380,11 +394,11 @@ function TripSummaryCard({
         <div className="border-t hairline pt-4">
           <div className="flex justify-between gap-4">
             <span className="text-neutral-500">{formatService(payload.serviceType)}</span>
-            <span className="text-right font-semibold text-ink">{quoteLoading ? "Calculating" : quote?.available ? "Instant quote" : quote?.requiresCustomQuote ? "Custom quote" : "Pending"}</span>
+            <span className="text-right font-semibold text-ink">{quote?.available ? "Instant quote" : quote?.requiresCustomQuote ? "Custom quote" : quoteLoading ? "Checking route" : "After vehicle"}</span>
           </div>
           <div className="mt-3 flex justify-between gap-4">
             <span className="text-neutral-500">Vehicle</span>
-            <span className="text-right font-semibold text-ink">{vehicleName}</span>
+            <span className="text-right font-semibold text-ink">{vehicleName || "Select vehicle next"}</span>
           </div>
         </div>
         {quote?.available ? (
