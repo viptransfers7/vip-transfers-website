@@ -32,7 +32,7 @@ export function VehicleStep({
   const canContinue = Boolean(selectedQuote && (selectedQuote.available || selectedQuote.requiresCustomQuote));
 
   return (
-    <div>
+    <div className="mx-auto max-w-[1180px] 2xl:max-w-[1240px]">
       <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end md:gap-4">
         <div>
           <h1 className="text-3xl font-black leading-tight text-ink md:text-4xl">Choose your vehicle</h1>
@@ -40,8 +40,8 @@ export function VehicleStep({
         </div>
         {loading ? <span className="text-sm font-bold text-[#9a7b41]">Calculating quotes...</span> : null}
       </div>
-      <div className="mt-5 grid gap-4 md:mt-7 md:gap-5 lg:grid-cols-[minmax(0,560px)_360px] lg:justify-center xl:grid-cols-[minmax(0,560px)_380px]">
-        <div className="grid max-w-[560px] gap-3">
+      <div className="mt-5 grid gap-4 md:mt-7 md:gap-5 lg:grid-cols-[minmax(0,760px)_360px] xl:grid-cols-[minmax(0,800px)_380px] 2xl:grid-cols-[minmax(0,840px)_400px]">
+        <div className="grid max-w-[560px] gap-3 lg:max-w-none">
           {vehiclePricing.map((vehicle) => (
             <VehicleCard
               key={vehicle.vehicleCode}
