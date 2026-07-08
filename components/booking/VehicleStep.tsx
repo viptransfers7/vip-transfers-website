@@ -15,7 +15,8 @@ export function VehicleStep({
   loading,
   tripSummary,
   payload,
-  selectedVehicleName
+  selectedVehicleName,
+  onContinue
 }: {
   selectedVehicleCode: string;
   setSelectedVehicleCode: (code: string) => void;
@@ -24,9 +25,11 @@ export function VehicleStep({
   tripSummary: string;
   payload: BookingPayload;
   selectedVehicleName?: string;
+  onContinue: () => void;
 }) {
   const selectedQuote = quotes[selectedVehicleCode] || null;
   const [previewVehicle, setPreviewVehicle] = useState<VehiclePricing | null>(null);
+  const canContinue = Boolean(selectedQuote && (selectedQuote.available || selectedQuote.requiresCustomQuote));
 
   return (
     <div>
@@ -37,8 +40,8 @@ export function VehicleStep({
         </div>
         {loading ? <span className="text-sm font-bold text-[#9a7b41]">Calculating quotes...</span> : null}
       </div>
-      <div className="mt-5 grid gap-4 md:mt-7 md:gap-5 xl:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="grid gap-3 xl:grid-cols-2">
+      <div className="mt-5 grid gap-4 md:mt-7 md:gap-5 lg:grid-cols-[minmax(0,560px)_360px] lg:justify-center xl:grid-cols-[minmax(0,560px)_380px]">
+        <div className="grid max-w-[560px] gap-3">
           {vehiclePricing.map((vehicle) => (
             <VehicleCard
               key={vehicle.vehicleCode}
@@ -50,9 +53,12 @@ export function VehicleStep({
             />
           ))}
         </div>
-        <aside className="order-first grid gap-3 xl:order-none xl:sticky xl:top-28 xl:self-start">
+        <aside className="order-first grid gap-3 lg:order-none lg:sticky lg:top-28 lg:self-start">
           <VehicleTripSummary payload={payload} quote={selectedQuote} quoteLoading={loading} vehicleName={selectedVehicleName} />
           {selectedQuote ? <QuoteSummary quote={selectedQuote} /> : null}
+          <button type="button" onClick={onContinue} disabled={!canContinue} className="btn btn-dark btn-pill hidden w-full lg:inline-flex">
+            Review booking
+          </button>
         </aside>
       </div>
       {previewVehicle ? <VehiclePreview vehicle={previewVehicle} selected={selectedVehicleCode === previewVehicle.vehicleCode} onClose={() => setPreviewVehicle(null)} onSelect={() => setSelectedVehicleCode(previewVehicle.vehicleCode)} /> : null}

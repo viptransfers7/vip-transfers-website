@@ -294,27 +294,30 @@ export function BookingFlow() {
     <div className="min-h-[calc(100vh-104px)] overflow-hidden bg-[#fbfaf7] shadow-[0_16px_44px_rgba(10,10,11,.07)] sm:rounded-lg">
       <div className={step === 0 ? "xl:grid xl:grid-cols-[minmax(0,1fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_420px]" : ""}>
         <section className="px-5 pb-28 pt-5 sm:px-7 sm:pt-7 md:px-10 md:pb-0 md:pt-9 lg:px-14">
-          <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} onBack={() => setStep(Math.max(0, step - 1))} />
-          {error ? <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}
-          {step === 0 ? (
-            <div className="grid gap-5 md:gap-7">
-              <ServiceStep serviceType={serviceType} setServiceType={setServiceType} />
-              <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
-            </div>
-          ) : null}
-          {step === 1 ? (
-            <VehicleStep
-              selectedVehicleCode={vehicleCode}
-              setSelectedVehicleCode={setVehicleCode}
-              quotes={quotes}
-              loading={quoteLoading}
-              tripSummary={`${trip.pickupLocation} to ${trip.dropoffLocation} · ${trip.passengers} pax · ${trip.luggage} luggage`}
-              payload={payload}
-              selectedVehicleName={selectedVehicle?.vehicleName}
-            />
-          ) : null}
-          {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
-          <div className={`fixed bottom-0 left-0 right-0 z-40 items-center justify-between gap-3 border-t hairline bg-[#fbfaf7]/95 px-5 py-3 shadow-[0_-12px_30px_rgba(10,10,11,.08)] backdrop-blur md:sticky md:-mx-10 md:mt-9 md:px-10 md:shadow-none lg:-mx-14 lg:px-14 ${step === 0 ? "flex xl:hidden" : "flex"}`}>
+          <div className={step === 0 ? "mx-auto max-w-[560px] xl:mx-0" : ""}>
+            <BookingProgress step={step} steps={bookingSteps} onStepClick={setStep} onBack={() => setStep(Math.max(0, step - 1))} />
+            {error ? <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800 md:mb-5 md:p-4">{error}</div> : null}
+            {step === 0 ? (
+              <div className="mx-auto grid max-w-[560px] gap-5 md:gap-7 xl:mx-0">
+                <ServiceStep serviceType={serviceType} setServiceType={setServiceType} />
+                <TripDetailsStep serviceType={serviceType} trip={trip} setTrip={setTrip} minDateTime={minDateTime} />
+              </div>
+            ) : null}
+            {step === 1 ? (
+              <VehicleStep
+                selectedVehicleCode={vehicleCode}
+                setSelectedVehicleCode={setVehicleCode}
+                quotes={quotes}
+                loading={quoteLoading}
+                tripSummary={`${trip.pickupLocation} to ${trip.dropoffLocation} · ${trip.passengers} pax · ${trip.luggage} luggage`}
+                payload={payload}
+                selectedVehicleName={selectedVehicle?.vehicleName}
+                onContinue={goToNextStep}
+              />
+            ) : null}
+            {step === 2 ? <ConfirmStep guest={guest} setGuest={setGuest} payload={payload} quote={selectedQuote} submitting={submitting} onSubmit={submitBooking} /> : null}
+          </div>
+          <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between gap-3 border-t hairline bg-[#fbfaf7]/95 px-5 py-3 shadow-[0_-12px_30px_rgba(10,10,11,.08)] backdrop-blur md:sticky md:-mx-10 md:mt-9 md:px-10 md:shadow-none lg:hidden">
             <div className="min-w-0">
               <div className="text-[10px] font-black uppercase tracking-[0.12em] text-neutral-400">{stickyMeta.eyebrow}</div>
               <div className="mt-0.5 flex items-baseline gap-1">

@@ -30,7 +30,7 @@ export function QuoteSummary({ quote }: { quote: QuoteResponse | null }) {
           <div className="text-[11px] font-black uppercase tracking-[0.14em] text-[#9a7b41] md:text-xs">Estimated price</div>
           <div className="mt-1 font-mono text-3xl font-semibold tracking-[-0.02em] tabular-nums md:text-[2rem]">{formatUSD(quote.finalPrice)}</div>
         </div>
-        <span className="rounded-full bg-[#e6f4ec] px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#20664a] md:px-3 md:py-2 md:text-xs">Instant</span>
+        <span className="rounded-full bg-[#EDF3EE] px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#4A7C59] md:px-3 md:py-2 md:text-xs">Instant</span>
       </div>
       <div className="mt-4 grid gap-2 text-sm">
         {quote.breakdown.map((item) => (

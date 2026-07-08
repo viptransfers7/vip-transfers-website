@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { tourProducts } from "@/lib/pricing/tourProducts";
 import type { AirportDirection, PlaceSnapshot, ServiceType } from "@/lib/pricing/types";
 import { LocationInput } from "./LocationInput";
@@ -156,12 +156,12 @@ export function TripDetailsStep({
           </div>
         ) : null}
 
-        <div className={`col-span-2 grid grid-cols-2 overflow-hidden rounded-xl border hairline bg-white ${isAirport ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+        <div className={`col-span-2 grid grid-cols-2 rounded-xl border hairline bg-white ${isAirport ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
           <CompactField label="Date">
-            <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="date" min={minDate} value={trip.pickupDate} onChange={(event) => setTrip({ pickupDate: event.target.value })} />
+            <DatePickerControl value={trip.pickupDate} min={minDate} onChange={(pickupDate) => setTrip({ pickupDate })} />
           </CompactField>
           <CompactField label="Time">
-            <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="time" min={minTime} value={trip.pickupTime} onChange={(event) => setTrip({ pickupTime: event.target.value })} />
+            <TimePickerControl value={trip.pickupTime} min={minTime} onChange={(pickupTime) => setTrip({ pickupTime })} />
           </CompactField>
           {isAirport ? (
             <CompactField label={trip.airportDirection === "arrival" ? "Arrival flight" : "Departure flight"} className="col-span-2 sm:col-span-1">
@@ -262,12 +262,12 @@ export function TripDetailsStep({
                 />
               </div>
             </div>
-            <div className="col-span-2 grid grid-cols-2 overflow-hidden rounded-xl border hairline bg-white sm:grid-cols-3">
+            <div className="col-span-2 grid grid-cols-2 rounded-xl border hairline bg-white sm:grid-cols-3">
               <CompactField label="Return date">
-                <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="date" min={trip.pickupDate || minDate} value={trip.returnDate} onChange={(event) => setTrip({ returnDate: event.target.value })} />
+                <DatePickerControl value={trip.returnDate} min={trip.pickupDate || minDate} onChange={(returnDate) => setTrip({ returnDate })} />
               </CompactField>
               <CompactField label="Time">
-                <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums" type="time" value={trip.returnTime} onChange={(event) => setTrip({ returnTime: event.target.value })} />
+                <TimePickerControl value={trip.returnTime} onChange={(returnTime) => setTrip({ returnTime })} />
               </CompactField>
               <CompactField label="Return flight" className="col-span-2 sm:col-span-1">
                 <input className="w-full bg-transparent p-0 text-[15px] font-semibold tracking-tight text-ink outline-none tabular-nums placeholder:text-neutral-400" placeholder="KE 085" value={trip.returnFlight} onChange={(event) => setTrip({ returnFlight: event.target.value })} />
@@ -300,7 +300,7 @@ function getAirportCodeFromTrip(pickupLocation: string, dropoffLocation: string)
 
 function CompactField({ label, children, className = "" }: { label: string; children: ReactNode; className?: string }) {
   return (
-    <label className={`grid gap-2 border-b border-r hairline px-4 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 ${className}`}>
+    <label className={`relative grid gap-2 border-b border-r hairline px-4 py-3 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 ${className}`}>
       <span className="text-[10px] font-black uppercase tracking-[0.14em] text-neutral-400">{label}</span>
       {children}
     </label>
@@ -325,4 +325,111 @@ function StepperField({ label, hint, value, min, onChange }: { label: string; hi
       </div>
     </div>
   );
+}
+
+function DatePickerControl({ value, min, onChange }: { value: string; min: string; onChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const options = useMemo(() => getDateOptions(min, 120), [min]);
+
+  return (
+    <div className="relative">
+      <button type="button" className={`flex w-full items-center justify-between gap-2 bg-transparent p-0 text-left text-[15px] font-semibold tracking-tight outline-none tabular-nums ${value ? "text-ink" : "text-neutral-400"}`} onClick={() => setOpen((current) => !current)} aria-expanded={open}>
+        <span>{value ? formatDateLabel(value) : "Select date"}</span>
+        <span className="text-neutral-500">⌄</span>
+      </button>
+      {open ? (
+        <div className="absolute left-0 right-0 top-[calc(100%+12px)] z-50 max-h-64 overflow-y-auto rounded-xl border hairline bg-white p-1 shadow-[0_14px_36px_rgba(10,10,11,.14)]">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-semibold transition hover:bg-[#fbfaf7] ${option.value === value ? "bg-[#F5EFE2] text-[#8F7241]" : "text-ink"}`}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+            >
+              <span>{option.label}</span>
+              <span className="text-xs text-neutral-400">{option.weekday}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function TimePickerControl({ value, min, onChange }: { value: string; min?: string; onChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const options = useMemo(() => getTimeOptions(min, value), [min, value]);
+
+  return (
+    <div className="relative">
+      <button type="button" className={`flex w-full items-center justify-between gap-2 bg-transparent p-0 text-left font-mono text-[15px] font-semibold tracking-tight outline-none tabular-nums ${value ? "text-ink" : "text-neutral-400"}`} onClick={() => setOpen((current) => !current)} aria-expanded={open}>
+        <span>{value || "Select time"}</span>
+        <span className="font-sans text-neutral-500">⌄</span>
+      </button>
+      {open ? (
+        <div className="absolute left-0 right-0 top-[calc(100%+12px)] z-50 max-h-64 overflow-y-auto rounded-xl border hairline bg-white p-1 shadow-[0_14px_36px_rgba(10,10,11,.14)]">
+          {options.map((option) => (
+            <button
+              key={option}
+              type="button"
+              className={`w-full rounded-lg px-3 py-2 text-left font-mono text-sm font-semibold tabular-nums transition hover:bg-[#fbfaf7] ${option === value ? "bg-[#F5EFE2] text-[#8F7241]" : "text-ink"}`}
+              onClick={() => {
+                onChange(option);
+                setOpen(false);
+              }}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function getDateOptions(min: string, days: number) {
+  const start = parseDateValue(min) || new Date();
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + index);
+    return {
+      value: toDateValue(date),
+      label: date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      weekday: date.toLocaleDateString("en-US", { weekday: "short" })
+    };
+  });
+}
+
+function getTimeOptions(min?: string, currentValue?: string) {
+  const options: string[] = [];
+  for (let hour = 0; hour < 24; hour += 1) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const value = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+      if (!min || value >= min) options.push(value);
+    }
+  }
+  if (currentValue && !options.includes(currentValue)) {
+    options.push(currentValue);
+    options.sort();
+  }
+  return options;
+}
+
+function formatDateLabel(value: string) {
+  const date = parseDateValue(value);
+  if (!date) return value;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function parseDateValue(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+}
+
+function toDateValue(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
