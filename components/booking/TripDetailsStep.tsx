@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useMemo, useState } from "react";
-import { tourProducts } from "@/lib/pricing/tourProducts";
+import { tourProducts } from "@/lib/tours/tourCatalog";
 import type { AirportDirection, PlaceSnapshot, ServiceType } from "@/lib/pricing/types";
 import { LocationInput } from "./LocationInput";
 

@@ -69,13 +69,19 @@ export type ServiceRule = {
 export type TourProduct = {
   slug: string;
   name: string;
+  status?: "draft" | "published" | "archived";
+  imageUrl?: string;
+  heroImageUrl?: string;
+  shortDescription?: string;
   durationHours: number;
   pickupArea: string;
   description: string;
+  itinerary?: string[];
   included: string[];
   excluded: string[];
   isActive: boolean;
   requiresCustomQuote: boolean;
+  sortOrder?: number;
 };
 
 export type TourVehiclePrice = {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { formatUSD } from "@/lib/format";
 import { vehiclePricing } from "@/lib/pricing/pricingData";
 import { airportPickupInstruction } from "@/lib/pricing/calculateQuote";
-import { getTourProduct } from "@/lib/pricing/tourProducts";
+import { getTourProduct } from "@/lib/tours/tourCatalog";
 import type { BookingPayload, GuestDetails, PendingBookingResponse } from "@/lib/booking/types";
 import { validateBookingPayload } from "@/lib/booking/validation";
 import type { QuoteInput, QuoteResponse, ServiceType } from "@/lib/pricing/types";

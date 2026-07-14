@@ -1,6 +1,15 @@
-# VIP Transfers Korea Pricing Database Tables Draft
+# VIP Transfers Korea Pricing Rules And Database Tables
 
-이 문서는 Dashboard / Supabase에 넣기 전 검토용 가격 테이블 초안입니다.
+Last updated: 2026-07-14
+
+이 문서는 현재 운영 중인 Google Sheet pricing rules와, 나중에 Dashboard / Supabase로 옮길 때 필요한 테이블 초안을 함께 정리합니다.
+
+현재 운영 기준:
+
+- `Pricing_rules` 시트 수정은 웹사이트 quote/booking 위젯에 바로 반영됩니다.
+- `Region_Rules` 시트는 서울/base area 이외 지역의 추가 charge unit을 `Extra_Hours`로 관리하고, 선택 차량의 hourly rate와 함께 계산됩니다.
+- 2026-07-14 제공된 기존 위젯 스크린샷의 ICN to Busan 가격은 `ICN_Flat + Extra_Hours * 0.5 * Hourly Rate ($)`와 정확히 일치합니다. 따라서 현재 운영 위젯의 `Extra_Hours`는 이름과 달리 half-hour unit처럼 적용된 것으로 봅니다.
+- DB 전환 전까지는 Google Sheet가 live pricing source of truth입니다.
 
 핵심 원칙:
 
@@ -9,7 +18,45 @@
 - 예: `Cadillac Escalade`와 `Chevrolet Suburban`은 둘 다 `SUV` 타입이지만 가격은 각각 다르게 가질 수 있습니다.
 - Dashboard `vehicle` 필드에는 `vehicle_type.name`을 보내고, 실제 가격/이미지/고객 선택은 `vehicle_option`으로 보존합니다.
 - Google Maps distance 기반 가격은 사용하지 않습니다.
-- 공항 flat price, 지역 rule, 서비스별 extra rule, quote snapshot을 기준으로 계산합니다.
+- 공항 flat price, 서울 PTP base hours, 지역별 `Extra_Hours * 0.5`, charter package price, quote snapshot을 기준으로 계산합니다.
+
+## 0. Live Sheet Contract
+
+### Pricing_rules
+
+현재 운영 CSV: `/Users/alexchoi/Downloads/2026_2분기/Pricing rules - Pricing_rules.csv`
+
+| Sheet column | Meaning | DB mapping |
+|---|---|---|
+| `Code` | Website vehicle option code | `vehicle_options.code`, `vehicle_option_pricing.vehicle_code` |
+| `Vehicle Name` | Customer-facing vehicle option name | `vehicle_options.name` |
+| `Hourly Rate ($)` | Vehicle hourly rate in USD | `vehicle_option_pricing.hourly_rate_usd` |
+| `Seoul_PTP_h` | Seoul point-to-point base hours | `vehicle_option_pricing.seoul_ptp_hours` |
+| `ICN_Flat` | Incheon Airport flat price | `vehicle_option_pricing.icn_flat_usd` |
+| `GMP_Flat` | Gimpo Airport flat price | `vehicle_option_pricing.gmp_flat_usd` |
+| `Charter_5h` | Fixed 5-hour charter package | `vehicle_option_pricing.charter_5h_usd` |
+| `Charter_10h` | Fixed 10-hour charter package | `vehicle_option_pricing.charter_10h_usd` |
+| `Charter_12h` | Fixed 12-hour charter package | `vehicle_option_pricing.charter_12h_usd` |
+| `Max Pax` | Passenger capacity for filtering | `vehicle_options.max_pax` |
+| `Max Lug` | Luggage capacity for filtering | `vehicle_options.max_luggage` |
+
+### Region_Rules
+
+현재 운영 CSV: `/Users/alexchoi/Downloads/2026_2분기/Pricing rules - Region_Rules.csv`
+
+| Sheet column | Meaning | DB mapping |
+|---|---|---|
+| `City_Name` | Searchable city/region display string, usually English/Korean aliases in one cell | `region_rules.region_name`, split aliases if needed |
+| `Extra_Hours` | Additional regional charge units outside base area. Current widget evidence shows one unit is charged as 0.5 hour. | `region_rules.extra_units` or `region_rules.extra_hours` with multiplier metadata |
+| `Is_Base_Area` | Whether the location is treated as base area with no extra hour charge | `region_rules.is_base_area` |
+
+Implementation note:
+
+- Treat `Extra_Hours` as the live widget's regional charge unit. Current ICN to Busan screenshot matches `Extra_Hours * 0.5 * Hourly Rate ($)`.
+- Base areas currently include ICN, GMP, Seoul, and Incheon/Songdo/Yeongjong rows with `Extra_Hours = 0`.
+- For point-to-point or regional quotes, use the same unit consistently unless the service type has a deliberate override.
+- For hourly/all-day charter, do not add airport flat rates just because ICN/GMP is the start or end point. Treat ICN/GMP as base regions for regional extra, but add one airport touch surcharge equal to `1 * Hourly Rate ($)` when the charter starts or ends at ICN/GMP.
+- Keep a quote snapshot at booking time because future sheet edits immediately change live widget prices.
 
 ## 1. vehicle_types
 
@@ -45,20 +92,20 @@ Suggested columns:
 | code | vehicle_type_code | name | category | max_pax | max_luggage | image_url | is_active | sort_order |
 |---|---|---|---|---:|---:|---|---:|---:|
 | g90 | EXECUTIVE_SEDAN | Genesis G90 | Executive sedan | 3 | 3 | /Images/g90.webp | true | 10 |
-| sclass | LUXURY_SEDAN | Mercedes-Benz S-Class | Luxury sedan | 3 | 3 | /Images/sclass.webp | true | 20 |
+| s_class | LUXURY_SEDAN | Mercedes S-Class | Luxury sedan | 3 | 3 | /Images/sclass.webp | true | 20 |
 | escalade | SUV | Cadillac Escalade | Luxury SUV | 5 | 5 | /Images/escalade.webp | true | 30 |
-| suburban | SUV | Chevrolet Suburban | Full-size SUV | 5 | 6 | /Images/suburban.webp | false | 35 |
-| staria | MPV | Hyundai Staria | Premium van | 6 | 7 | /Images/staria.webp | true | 40 |
-| carnival | MPV | Kia Carnival Hi Limousine | Premium MPV | 6 | 6 | /Images/carnival.webp | false | 45 |
-| sprinter_9_short | SPRINTER | Mercedes-Benz Sprinter 9-seat Short Body | Executive van | 9 | 8 | /Images/sprinter319.webp | false | 50 |
-| sprinter_14 | SPRINTER | Mercedes-Benz Sprinter 14-seat | Executive van | 14 | 12 | /Images/sprinter519.webp | false | 55 |
-| sprinter | SPRINTER | Mercedes-Benz Sprinter | Executive van | 13 | 12 | /Images/sprinter519.webp | true | 59 |
+| suburban | SUV | Chevrolet Suburban | Full-size SUV | 5 | 5 | /Images/suburban.webp | true | 35 |
+| staria | MPV | Hyundai Staria | Premium van | 5 | 5 | /Images/staria.webp | true | 40 |
+| carnival | MPV | Kia Carnival | Premium MPV | 5 | 5 | /Images/carnival.webp | true | 45 |
+| sprinter_8 | SPRINTER | Sprinter (8 Pax) | Executive van | 8 | 8 | /Images/sprinter319.webp | true | 50 |
+| sprinter_13 | SPRINTER | Sprinter (13 Pax) | Executive van | 13 | 10 | /Images/sprinter519.webp | true | 55 |
+| sprinter_lux | SPRINTER | Sprinter Luxury (7 Pax) | Luxury van | 7 | 6 | /Images/sprinter519.webp | true | 60 |
 
 Notes:
 
-- `sprinter`는 현재 코드 호환용 기존 옵션입니다.
-- 신규 운영에서는 `sprinter_9_short`, `sprinter_14`처럼 세부 옵션으로 나누는 것을 권장합니다.
-- `suburban`, `carnival`, 세부 Sprinter 가격은 확정 후 `is_active = true`로 전환합니다.
+- 위 코드는 2026-07-14 운영 `Pricing_rules` 시트 기준입니다.
+- 기존 코드/문서의 `sclass`, `sprinter`, `sprinter_9_short`, `sprinter_14`는 live sheet 코드와 다릅니다. 웹사이트 구현은 live sheet 코드로 동기화해야 합니다.
+- `Vehicle Name` 셀의 trailing space 등은 import 단계에서 trim 처리합니다.
 
 Suggested columns:
 
@@ -83,10 +130,10 @@ Suggested columns:
 | id | vehicle_code | media_type | url | alt_text | is_primary | is_active | sort_order |
 |---|---|---|---|---|---:|---:|---:|
 | img_g90_main | g90 | image | /Images/g90.webp | Genesis G90 exterior | true | true | 10 |
-| img_sclass_main | sclass | image | /Images/sclass.webp | Mercedes-Benz S-Class exterior | true | true | 10 |
+| img_sclass_main | s_class | image | /Images/sclass.webp | Mercedes S-Class exterior | true | true | 10 |
 | img_escalade_main | escalade | image | /Images/escalade.webp | Cadillac Escalade exterior | true | true | 10 |
 | img_staria_main | staria | image | /Images/staria.webp | Hyundai Staria exterior | true | true | 10 |
-| img_sprinter_main | sprinter | image | /Images/sprinter519.webp | Mercedes-Benz Sprinter exterior | true | true | 10 |
+| img_sprinter_13_main | sprinter_13 | image | /Images/sprinter519.webp | Sprinter 13 Pax exterior | true | true | 10 |
 
 Suggested columns:
 
@@ -109,7 +156,7 @@ Suggested columns:
 
 | id | version_name | status | currency | effective_from | effective_to | notes |
 |---|---|---|---|---|---|---|
-| pv_2026_standard | 2026 Standard Pricing | published | USD | 2026-07-01 | null | Current website seed pricing |
+| pv_2026_live_sheet | 2026 Live Google Sheet Pricing | published | USD | 2026-07-14 | null | Current Google Sheet pricing reflected by website widget |
 
 Suggested columns:
 
@@ -133,22 +180,23 @@ Google Sheet `Pricing_rules`에 해당하는 핵심 가격표입니다.
 
 | pricing_version_id | vehicle_code | hourly_rate_usd | seoul_ptp_hours | icn_flat_usd | gmp_flat_usd | charter_5h_usd | charter_10h_usd | charter_12h_usd | currency | is_active |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|---:|
-| pv_2026_standard | g90 | 65 | 2 | 180 | 120 | 330 | 580 | 680 | USD | true |
-| pv_2026_standard | sclass | 85 | 2 | 230 | 160 | 430 | 760 | 880 | USD | true |
-| pv_2026_standard | escalade | 90 | 2.2 | 260 | 180 | 470 | 820 | 960 | USD | true |
-| pv_2026_standard | staria | 70 | 2 | 210 | 145 | 360 | 630 | 740 | USD | true |
-| pv_2026_standard | sprinter | 115 | 2.5 | 360 | 270 | 620 | 1050 | 1220 | USD | true |
-| pv_2026_standard | suburban | TBD | TBD | TBD | TBD | TBD | TBD | TBD | USD | false |
-| pv_2026_standard | carnival | TBD | TBD | TBD | TBD | TBD | TBD | TBD | USD | false |
-| pv_2026_standard | sprinter_9_short | TBD | TBD | TBD | TBD | TBD | TBD | TBD | USD | false |
-| pv_2026_standard | sprinter_14 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | USD | false |
+| pv_2026_live_sheet | staria | 50 | 2 | 150 | 135 | 250 | 400 | 500 | USD | true |
+| pv_2026_live_sheet | carnival | 50 | 2 | 150 | 135 | 250 | 400 | 500 | USD | true |
+| pv_2026_live_sheet | g90 | 70 | 2 | 200 | 180 | 350 | 560 | 700 | USD | true |
+| pv_2026_live_sheet | suburban | 70 | 2 | 200 | 180 | 350 | 560 | 700 | USD | true |
+| pv_2026_live_sheet | escalade | 100 | 2 | 300 | 270 | 500 | 800 | 1000 | USD | true |
+| pv_2026_live_sheet | s_class | 100 | 2 | 350 | 315 | 550 | 800 | 1000 | USD | true |
+| pv_2026_live_sheet | sprinter_8 | 70 | 2 | 250 | 225 | 350 | 560 | 700 | USD | true |
+| pv_2026_live_sheet | sprinter_13 | 80 | 2 | 300 | 270 | 500 | 640 | 800 | USD | true |
+| pv_2026_live_sheet | sprinter_lux | 100 | 2 | 400 | 360 | 550 | 800 | 1000 | USD | true |
 
 Notes:
 
 - `charter_5h_usd`, `charter_10h_usd`, `charter_12h_usd`는 고정 패키지 가격입니다.
 - `hourly_rate_usd * hours`로 charter 가격을 만들지 않습니다.
 - `hourly_rate_usd`는 region extra, stopover fee, fallback 계산에 사용합니다.
-- 현재 웹사이트 코드상 G90 `gmp_flat_usd = 120`입니다. 실제 Sheet에서 G90 GMP가 180이면 이 row를 수정해야 합니다.
+- 2026-07-14 운영 시트 기준 G90 `gmp_flat_usd = 180`입니다.
+- 현재 repository code가 위 live sheet 값과 다르면 `06 Booking / Quote Flow` thread가 동기화해야 합니다.
 
 Suggested columns:
 
@@ -174,38 +222,40 @@ Recommended primary key:
 
 ## 5. region_rules
 
-지역 판별 및 서비스별 extra rule입니다.
+지역 판별 및 서비스별 extra rule입니다. 현재 운영 시트는 `Extra_Hours` 컬럼으로 관리하지만, 기존 위젯 가격은 half-hour unit 계산과 일치합니다.
 
-| code | region_name | aliases | airport_icn_extra_units | airport_gmp_extra_units | ptp_extra_units | hourly_dispatch_extra_units | is_base_area | is_service_area | requires_custom_quote | quote_message |
-|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| SEOUL_BASE | Seoul Base Area | seoul, gangnam, myeongdong, jongno, gwanghwamun, itaewon, hannam, coex, yeouido, yongsan, jamsil, mapo, hongdae, samseong, four seasons, lotte hotel, lotte world, lotte world tower, signiel, josun palace, 서울, 강남, 명동, 광화문, 코엑스, 여의도, 용산, 잠실, 마포, 홍대, 삼성동, 롯데월드, 롯데월드타워, 시그니엘 | 0 | 0 | 0 | 0 | true | true | false | null |
-| ICN_AIRPORT | Incheon Airport | incheon airport, incheon international airport, icn, terminal 1, terminal 2, 인천공항, 인천국제공항 | 0 | 0 | 0 | 0 | false | true | false | null |
-| GMP_AIRPORT | Gimpo Airport | gimpo airport, gimpo international airport, gmp, 김포공항, 김포국제공항 | 0 | 0 | 0 | 0 | false | true | false | null |
-| SONGDO_INCHEON | Songdo / Incheon City | songdo, songdo convensia, convensia, central park incheon, paradise city, incheon, 송도, 송도컨벤시아, 컨벤시아, 센트럴파크, 파라다이스시티, 인천 | 0 | 0 | 2 | 2 | false | true | false | null |
-| PANGYO_BUNDANG | Pangyo / Bundang | pangyo, bundang, seongnam, 판교, 분당, 성남 | 1 | 1 | 1 | 1 | false | true | false | null |
-| SUWON_YONGIN | Suwon / Yongin | suwon, yongin, gwanggyo, 수원, 용인, 광교 | 2 | 2 | 2 | 2 | false | true | false | null |
-| NAMI_GAPYEONG | Nami Island / Gapyeong | nami, gapyeong, petite france, 남이섬, 가평 | null | null | null | null | false | true | true | This route is usually handled as a private tour or custom day trip. |
-| CHUNCHEON_LEGOLAND | Chuncheon / Legoland | chuncheon, legoland, 춘천, 레고랜드 | null | null | null | null | false | true | true | Long-distance dispatch requires concierge review. |
-| REGIONAL_KOREA | Regional Korea | busan, daegu, daejeon, jeju, gangneung, 부산, 대구, 대전, 제주, 강릉 | null | null | null | null | false | false | true | Regional or long-distance Korea service requires a custom quote. |
+| code | city_name | extra_units | is_base_area | note |
+|---|---|---:|---:|---|
+| ICN_AIRPORT | Incheon International Airport / ICN / 인천공항 | 0 | true | Base area in live sheet |
+| GMP_AIRPORT | Gimpo International Airport / GMP / 김포공항 | 0 | true | Base area in live sheet |
+| SEOUL | Seoul / 서울 | 0 | true | Base area |
+| INCHEON_SONGDO_YEONGJONG | Incheon / Songdo / Yeongjong / 인천 / 송도 / 영종 | 0 | true | Current CSV has a typo: `ncheon`; normalize on import |
+| ANYANG | Anyang / 안양 | 1 | false | Nearby Gyeonggi example |
+| GIMPO_CITY | Gimpo / 김포 | 1 | false | City, not GMP airport |
+| UIJEONGBU | Uijeongbu / 의정부 | 1.5 | false | Decimal hours are allowed |
+| YONGIN | Yongin / 용인 | 2 | false | Regional extra hour example |
+| GAPYEONG | Gapyeong / 가평 | 3 | false | Private tour route can still use extra-hour rule if widget allows |
+| CHUNCHEON | Chuncheon / 춘천 | 4 | false | Regional extra hour example |
+| BUSAN | Busan / 부산 | 18 | false | Long-distance example |
+| JEJU | Jeju / 제주 | TBD | false | Not present in the inspected CSV; custom quote if unsupported |
 
 Notes:
 
-- `airport_*_extra_units`는 공항 transfer에서 사용합니다.
-- `SONGDO_INCHEON`은 ICN/GMP 공항 transfer에서는 서울과 동일하게 extra 0입니다.
-- `SONGDO_INCHEON`은 point-to-point와 hourly charter에서는 서울 dispatch 기준 extra 2입니다.
-- `extra_units`는 half-hour unit입니다. `2` means `2 * 0.5 * hourly_rate`.
+- 운영 CSV는 159줄이며, header를 제외하면 158개 region rows입니다.
+- `Extra_Hours`는 현재 위젯 기준 half-hour unit처럼 적용됩니다. 예: Busan `18` means `18 * 0.5 = 9` surcharge hours.
+- `City_Name`은 alias가 `/`로 합쳐져 있으므로 DB 이관 시 `aliases text[]`로 split/trim하는 것을 권장합니다.
+- `Is_Base_Area = TRUE`인 row는 regional extra를 부과하지 않습니다.
 
 Suggested columns:
 
 | column | type | note |
 |---|---|---|
 | code | text primary key | Region code |
-| region_name | text | Display name |
-| aliases | text[] | Matching aliases |
-| airport_extra_units | jsonb | Example: `{"ICN": 0, "GMP": 0}` |
-| ptp_extra_units | numeric | PTP region extra unit |
-| hourly_dispatch_extra_units | numeric | Hourly dispatch extra unit |
-| extra_unit_type | text | `half_hour` |
+| city_name | text | Original sheet display string |
+| region_name | text | Normalized display name |
+| aliases | text[] | Split aliases from `City_Name` |
+| extra_units | numeric | Raw `Extra_Hours` value from live sheet |
+| extra_unit_hours | numeric | Usually `0.5` based on current widget evidence |
 | is_base_area | boolean | Seoul base or equivalent |
 | is_service_area | boolean | Auto-quote possible area |
 | requires_custom_quote | boolean | Force quote request |
@@ -245,9 +295,9 @@ Suggested columns:
 
 | pricing_version_id | addon_code | addon_name | applies_to | calculation_type | value | currency | is_active |
 |---|---|---|---|---|---:|---|---:|
-| pv_2026_standard | EXTRA_STOP_HALF_HOUR | Extra stop | point_to_point | hourly_rate_multiplier | 0.5 | USD | true |
-| pv_2026_standard | AIRPORT_STOPOVER_CUSTOM | Airport stopover | airport_transfer | custom_quote | null | USD | true |
-| pv_2026_standard | COMPLEX_ROUTE_CUSTOM | Complex route | point_to_point,hourly_charter | custom_quote | null | USD | true |
+| pv_2026_live_sheet | EXTRA_STOP_HALF_HOUR | Extra stop | point_to_point | hourly_rate_multiplier | 0.5 | USD | true |
+| pv_2026_live_sheet | AIRPORT_STOPOVER_CUSTOM | Airport stopover | airport_transfer | custom_quote | null | USD | true |
+| pv_2026_live_sheet | COMPLEX_ROUTE_CUSTOM | Complex route | point_to_point,hourly_charter | custom_quote | null | USD | true |
 
 Notes:
 
@@ -288,16 +338,24 @@ Suggested columns:
 
 | tour_slug | vehicle_code | price_usd | currency | is_active |
 |---|---|---:|---|---:|
-| seoul-city-tour-5h | g90 | 330 | USD | true |
-| seoul-city-tour-5h | sclass | 430 | USD | true |
-| seoul-city-tour-5h | escalade | 470 | USD | true |
-| seoul-city-tour-5h | staria | 360 | USD | true |
-| seoul-city-tour-5h | sprinter | 620 | USD | true |
+| seoul-city-tour-5h | staria | 250 | USD | true |
+| seoul-city-tour-5h | carnival | 250 | USD | true |
+| seoul-city-tour-5h | g90 | 350 | USD | true |
+| seoul-city-tour-5h | suburban | 350 | USD | true |
+| seoul-city-tour-5h | escalade | 500 | USD | true |
+| seoul-city-tour-5h | s_class | 550 | USD | true |
+| seoul-city-tour-5h | sprinter_8 | 350 | USD | true |
+| seoul-city-tour-5h | sprinter_13 | 500 | USD | true |
+| seoul-city-tour-5h | sprinter_lux | 550 | USD | true |
 | nami-island-10h | g90 | 560 | USD | true |
-| nami-island-10h | sclass | 730 | USD | true |
-| nami-island-10h | escalade | 790 | USD | true |
-| nami-island-10h | staria | 610 | USD | true |
-| nami-island-10h | sprinter | 980 | USD | true |
+| nami-island-10h | staria | 400 | USD | true |
+| nami-island-10h | carnival | 400 | USD | true |
+| nami-island-10h | suburban | 560 | USD | true |
+| nami-island-10h | sprinter_8 | 560 | USD | true |
+| nami-island-10h | sprinter_13 | 640 | USD | true |
+| nami-island-10h | escalade | 800 | USD | true |
+| nami-island-10h | s_class | 800 | USD | true |
+| nami-island-10h | sprinter_lux | 800 | USD | true |
 
 Recommended primary key:
 
@@ -335,56 +393,48 @@ Example snapshot:
 
 ```json
 {
-  "pricing_version_id": "pv_2026_standard",
+  "pricing_version_id": "pv_2026_live_sheet",
   "service_type": "airport_transfer",
-  "vehicle_code": "staria",
-  "vehicle_name": "Hyundai Staria",
-  "vehicle_type_code": "MPV",
-  "vehicle_type_name": "MPV",
+  "vehicle_code": "g90",
+  "vehicle_name": "Genesis G90",
+  "vehicle_type_code": "EXECUTIVE_SEDAN",
+  "vehicle_type_name": "Executive Sedan",
   "currency": "USD",
-  "base_price": 355,
-  "final_price": 319,
+  "base_price": 200,
+  "final_price": 200,
   "route_snapshot": {
     "legs": [
       {
-        "label": "Outbound",
+        "label": "One way",
         "airport_code": "ICN",
         "direction": "arrival",
         "pickup_region": "Incheon Airport",
         "dropoff_region": "Seoul Base Area",
-        "price": 210
-      },
-      {
-        "label": "Return",
-        "airport_code": "GMP",
-        "direction": "departure",
-        "pickup_region": "Seoul Base Area",
-        "dropoff_region": "Gimpo Airport",
-        "price": 145
+        "price": 200
       }
     ]
   },
   "breakdown": [
-    { "label": "Outbound ICN flat rate", "amount": 210 },
-    { "label": "Return GMP flat rate", "amount": 145 },
-    { "label": "Round trip subtotal", "amount": 355 },
-    { "label": "Round trip discount 10%", "amount": -36 }
+    { "label": "ICN flat rate", "amount": 200 }
   ]
 }
 ```
 
-## 11. Example Calculations From This Draft
+## 11. Example Calculations From Live Sheet
 
-| scenario | vehicle | result |
-|---|---|---:|
-| ICN to Seoul hotel | Genesis G90 | 180 |
-| ICN to Songdo | Genesis G90 | 180 |
-| Seoul to Songdo PTP | Hyundai Staria | 210 |
-| Songdo 5h hourly charter | Hyundai Staria | 430 |
-| Seoul to Pangyo with Suwon stop | Genesis G90 | 228 |
-| ICN to unknown resort | Genesis G90 | Custom Quote |
-| Airport transfer with stopover | Genesis G90 | Custom Quote |
-| Airport to airport transfer | Genesis G90 | Custom Quote |
+These examples use the 2026-07-14 `Pricing_rules` and `Region_Rules` CSV values. Regional PTP examples assume the widget applies `(Seoul_PTP_h + Extra_Hours) * Hourly Rate ($)`.
+
+| scenario | vehicle | formula | result |
+|---|---|---|---:|
+| ICN to Seoul hotel | Genesis G90 | `ICN_Flat` | 200 |
+| GMP to Seoul hotel | Genesis G90 | `GMP_Flat` | 180 |
+| Seoul PTP within base area | Hyundai Staria | `(2 + 0) * 50` | 100 |
+| Seoul to Uijeongbu PTP | Genesis G90 | `(2 + 1.5) * 70` | 245 |
+| Seoul to Yongin PTP | Genesis G90 | `(2 + 2) * 70` | 280 |
+| Seoul 5h charter | Hyundai Staria | `Charter_5h` | 250 |
+| Seoul 10h charter | Sprinter (13 Pax) | `Charter_10h` | 640 |
+| Airport transfer with stopover | Genesis G90 | Operational review | Custom Quote |
+| Airport to airport transfer | Genesis G90 | Operational review | Custom Quote |
 
 ## 12. Minimum Tables To Build First
 
@@ -408,7 +458,7 @@ Phase 2:
 
 Important implementation notes:
 
-- Website quote API reads only published pricing versions.
+- Current website widget reads the live Google Sheet pricing source. If/when DB-backed pricing replaces the sheet, website quote API should read only published pricing versions.
 - Dashboard can edit draft pricing versions.
 - Publish action creates or activates one published pricing version.
 - Booking creation stores a quote snapshot.

@@ -1,6 +1,6 @@
 # VIP Transfers Korea Site Workplan
 
-Last updated: 2026-07-07
+Last updated: 2026-07-14
 
 This is the coordination document for the VIP Transfers Korea website threads. It defines thread ownership, page/file boundaries, shared component rules, priorities, and pre-implementation checks.
 
@@ -67,7 +67,8 @@ If a thread needs a file outside its scope, it should record the need in this do
 |---:|---|---|---|---|
 | P0 | Confirm data boundary | Ensure all booking/reservation planning follows Dashboard handoff | `docs/dashboard-data-handoff.md` | `00 Coordination`, `06 Booking / Quote Flow` |
 | P0 | Booking payload audit | Verify website request payload maps only allowed fields and defaults to `Pending`/`Unbilled` | Current `lib/booking/*`, booking API routes | `06 Booking / Quote Flow` |
-| P1 | Quote/catalog consistency | Align visible fleet options, pricing logic, and pricing table draft | `docs/pricing-database-tables.md`, `lib/pricing/*` | `05 Fleet / Catalog`, `06 Booking / Quote Flow` |
+| P0 | Live pricing sheet sync | Align repository pricing data with current `Pricing_rules` and `Region_Rules` sheets because sheet edits are reflected in the live widget | `docs/pricing-database-tables.md`, `lib/pricing/*` | `06 Booking / Quote Flow` |
+| P1 | Quote/catalog consistency | Align visible fleet options, pricing logic, and live pricing table contract | `docs/pricing-database-tables.md`, `lib/pricing/*` | `05 Fleet / Catalog`, `06 Booking / Quote Flow` |
 | P1 | Primary conversion path | Homepage/service/fleet CTAs should drive to the correct booking or quote flow | Route copy and `app/booking/page.tsx` | `01`, `02`, `03`, `04`, `05`, `06` |
 | P1 | Airport transfer completeness | ICN/GMP pages must reflect flight requirement, meet-and-greet expectations, and route quote behavior | Booking validation and airport notices | `02 Airport Transfers`, `06 Booking / Quote Flow` |
 | P2 | Fleet content polish | Confirm capacity, luggage, vehicle type, and images per public catalog | `public/Images/*`, fleet pages | `05 Fleet / Catalog` |
@@ -90,6 +91,11 @@ Record cross-thread decisions here so later implementation threads do not redisc
 | 2026-07-07 | Pricing should be based on flat airport prices, region rules, service extra rules, and quote snapshots, not Google Maps distance pricing. | Quote engine and pricing docs | `06 Booking / Quote Flow` |
 | 2026-07-07 | Website should read only published catalog/pricing records when database-backed pricing is introduced. | Quote/catalog work | `06 Booking / Quote Flow` |
 | 2026-07-07 | Store special requests, flight info, child seat, name sign, and similar customer context in `note` until dedicated website booking fields exist. | Booking payload | `06 Booking / Quote Flow` |
+| 2026-07-14 | Current Google Sheet tabs `Pricing_rules` and `Region_Rules` are the live pricing source; edits there are reflected in the website widget. | Quote widget and pricing sync | `06 Booking / Quote Flow` |
+| 2026-07-14 | Existing widget pricing for ICN to Busan shows `Region_Rules.Extra_Hours` is charged as half-hour units: `Extra_Hours * 0.5 * hourly_rate`. Keep this behavior unless the pricing sheet is intentionally redefined. | Regional quote calculation | `06 Booking / Quote Flow` |
+| 2026-07-14 | For hourly/all-day charter that starts or ends at ICN/GMP, do not add airport flat. Add one airport touch surcharge equal to `1 * hourly_rate`, then add any non-base regional extra. | Hourly/all-day quote calculation | `06 Booking / Quote Flow` |
+| 2026-07-14 | Current live vehicle codes include `s_class`, `sprinter_8`, `sprinter_13`, and `sprinter_lux`; older repository codes such as `sclass` and `sprinter` need sync review before implementation changes. | Fleet, quote, booking mapping | `05 Fleet / Catalog`, `06 Booking / Quote Flow` |
+| 2026-07-14 | Tour packages should be managed as separate product catalog entries with image, itinerary, inclusions/exclusions, and vehicle-specific prices, not mixed into generic transfer pricing. | Tour catalog and booking quote flow | `04 Private Tours`, `06 Booking / Quote Flow` |
 
 ## 6. Implementation Checklist
 
@@ -98,6 +104,7 @@ Use this before a thread edits implementation files:
 - Confirm the file is within the thread's ownership area.
 - Read `docs/dashboard-data-handoff.md` if the change touches booking, quote, reservation mapping, tracking, payment, or customer confirmation.
 - Read `docs/pricing-database-tables.md` if the change touches vehicle options, fleet capacity, tour products, quote amounts, route rules, or published pricing.
+- For pricing changes, compare against the live Google Sheet contract documented in `docs/pricing-database-tables.md`; do not assume hardcoded repository values are current.
 - Check whether the file is a shared component or global CSS. If yes, list affected routes before editing.
 - Avoid Dashboard operational fields in public website code and UI.
 - Preserve the website-to-dashboard defaults: `company: "Website"`, `status: "Pending"`, `paymentStatus: "Unbilled"` or supported paid state, and `billingStatus: "Unbilled"` unless payment flow proves otherwise.
@@ -111,8 +118,7 @@ Use this before a thread edits implementation files:
 | Item | Why it matters | Suggested owner | Status |
 |---|---|---|---|
 | Confirm whether `vehicle` in reservation payload should store catalog option label or dashboard vehicle type label. | Handoff says Dashboard treats `vehicle` as requested vehicle type; pricing doc separates `vehicle_option` and `vehicle_type`. | `06 Booking / Quote Flow` with Dashboard owner | Open |
-| Decide active public vehicle options for Suburban, Carnival, and Sprinter variants. | Pricing draft marks some options inactive/TBD; fleet pages and booking choices must agree. | `05 Fleet / Catalog`, `06 Booking / Quote Flow` | Open |
-| Confirm G90 GMP flat price. | Pricing draft notes current website code may differ from source sheet. | `06 Booking / Quote Flow` | Open |
+| Sync hardcoded pricing code with live sheets. | Current `lib/pricing/pricingData.ts` and `lib/pricing/regionRules.ts` do not match the 2026-07-14 live CSV values/codes. | `06 Booking / Quote Flow` | Open |
+| Decide whether live sheet or DB-backed published pricing is the next operational source. | The current widget reflects Google Sheet edits immediately, while DB docs describe a future published pricing model. | `00 Coordination`, `06 Booking / Quote Flow` | Open |
 | Define public tracking field allowlist. | Tracking page must be useful without leaking dispatch/accounting internals. | `07 Payments / Email / Tracking` | Open |
 | Decide release QA route list. | Shared visual/global changes need a stable smoke-test set. | `09 SEO / QA / Release` | Open |
-

@@ -1,7 +1,7 @@
 import { getVehiclePricing } from "./pricingData";
 import { detectAirport, findRegion } from "./regionRules";
 import { getServiceRule } from "./serviceRules";
-import { getTourProduct, getTourVehiclePrice } from "./tourProducts";
+import { getTourProduct, getTourVehiclePrice } from "@/lib/tours/tourCatalog";
 import type { AirportCode, PlaceSnapshot, QuoteBreakdownItem, QuoteInput, QuoteResponse, RegionRule, ServiceType, VehiclePricing } from "./types";
 
 const airportMeetingInstruction = "We track your flight. After baggage claim, please proceed to the arrival hall. Your chauffeur will meet you with your name sign.";
@@ -217,8 +217,10 @@ function calculatePointToPointQuote(input: QuoteInput, vehicle: VehiclePricing):
 function calculateHourlyQuote(input: QuoteInput, vehicle: VehiclePricing): QuoteResponse {
   const duration = input.hourlyDuration || 5;
   const packagePrice = duration === 12 ? vehicle.charter12hUsd : duration === 10 ? vehicle.charter10hUsd : vehicle.charter5hUsd;
-  const pickupRegion = findRegion(locationText(input.pickupLocation, input.pickupPlace));
-  const dropoffRegion = findRegion(locationText(input.dropoffLocation, input.dropoffPlace));
+  const pickupText = locationText(input.pickupLocation, input.pickupPlace);
+  const dropoffText = locationText(input.dropoffLocation, input.dropoffPlace);
+  const pickupRegion = findRegion(pickupText);
+  const dropoffRegion = findRegion(dropoffText);
   const hasStopover = Boolean(input.stopover?.trim());
   const stopoverRegion = hasStopover ? findRegion(input.stopover) : undefined;
   const customRegion = [pickupRegion, dropoffRegion, stopoverRegion].find((region) => region?.requiresCustomQuote || region?.isServiceArea === false);
@@ -226,9 +228,11 @@ function calculateHourlyQuote(input: QuoteInput, vehicle: VehiclePricing): Quote
   if (!pickupRegion || !dropoffRegion) return customQuote(input, vehicle, "Hourly charter pickup and dropoff must match an auto-quote service region.");
   if (hasStopover && !stopoverRegion) return customQuote(input, vehicle, "Hourly charter stopover could not be matched to an auto-quote service region.");
 
+  const airportTouchSurcharge = hasAirportTouch(pickupText, dropoffText) ? vehicle.hourlyRateUsd : 0;
   const regionExtraUnits = Math.max(hourlyDispatchExtraUnits(pickupRegion), hourlyDispatchExtraUnits(dropoffRegion), hourlyDispatchExtraUnits(stopoverRegion));
   const regionExtra = roundMoney(regionExtraUnits * 0.5 * vehicle.hourlyRateUsd);
   const breakdown: QuoteBreakdownItem[] = [{ label: `${duration}-hour charter package`, amount: packagePrice }];
+  if (airportTouchSurcharge) breakdown.push({ label: "Airport pickup/dropoff handling", amount: airportTouchSurcharge });
   if (regionExtra) breakdown.push({ label: "Region extra", amount: regionExtra });
 
   return {
@@ -241,12 +245,12 @@ function calculateHourlyQuote(input: QuoteInput, vehicle: VehiclePricing): Quote
     ...vehicleQuoteFields(vehicle),
     currency: "USD",
     basePrice: packagePrice,
-    finalPrice: roundMoney(packagePrice + regionExtra),
+    finalPrice: roundMoney(packagePrice + airportTouchSurcharge + regionExtra),
     pickupRegion: pickupRegion?.regionName,
     dropoffRegion: dropoffRegion?.regionName,
     breakdown,
     suggestedAction: "pay_now",
-    notes: ["Hourly charter uses fixed 5h / 10h / 12h package pricing. Stopovers and itinerary notes are kept with the booking."]
+    notes: ["Hourly charter uses fixed 5h / 10h / 12h package pricing. Airport starts or ends add one hourly unit instead of airport flat pricing."]
   };
 }
 
@@ -351,6 +355,10 @@ function pointToPointExtraUnits(region: RegionRule | undefined) {
 
 function hourlyDispatchExtraUnits(region: RegionRule | undefined) {
   return region?.hourlyDispatchExtraUnits ?? region?.extraUnits ?? 0;
+}
+
+function hasAirportTouch(pickupText: string, dropoffText: string) {
+  return Boolean(detectAirport(pickupText) || detectAirport(dropoffText));
 }
 
 function locationText(location: string, place?: PlaceSnapshot) {
