@@ -68,6 +68,44 @@ const defaultServiceArea = {
   }))
 };
 
+const serviceTypes = [
+  {
+    index: "01",
+    label: "Airport Transfer",
+    href: "/airport-transfer-seoul",
+    description: "ICN and GMP arrivals, departures, hotel transfers, and airport-to-airport connections.",
+    meta: "ICN / GMP"
+  },
+  {
+    index: "02",
+    label: "Hourly / As Directed",
+    href: "/seoul-chauffeur-service",
+    description: "5h, 10h, or 12h chauffeur standby for meetings, shopping, dining, and flexible schedules.",
+    meta: "Standby"
+  },
+  {
+    index: "03",
+    label: "VIP Protocol Coordination",
+    href: "/vip-protocol-transport-korea",
+    description: "Delegations, high-profile guests, business events, venue handoffs, and multi-vehicle planning.",
+    meta: "Protocol"
+  },
+  {
+    index: "04",
+    label: "Private Tour",
+    href: "/private-tours-korea",
+    description: "Private chauffeured tour days for Seoul, Nami Island, shopping, dining, and leisure routes.",
+    meta: "Tours"
+  },
+  {
+    index: "05",
+    label: "City Transfer",
+    href: "/seoul-chauffeur-service",
+    description: "Point-to-point transfers between hotels, offices, residences, restaurants, and event venues.",
+    meta: "Seoul"
+  }
+];
+
 export function ServicePage({
   eyebrow,
   title,
@@ -141,6 +179,34 @@ export function ServicePage({
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+      <section className="border-b hairline bg-paper px-5 py-9 md:px-12 md:py-12">
+        <div className="mx-auto w-full max-w-[1260px]">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <div className="eyebrow">Service Types</div>
+              <h2 className="serif-title mt-3 text-[1.75rem] leading-[1.06] md:text-4xl">Choose the service style before selecting a vehicle.</h2>
+            </div>
+            <Link href="/booking" className="btn btn-dark md:shrink-0">
+              Start Booking
+            </Link>
+          </div>
+          <div className="mt-7 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {serviceTypes.map((service) => (
+              <Link key={`${service.index}-${service.label}`} href={service.href} className="surface-card group flex min-h-[210px] flex-col justify-between p-5 transition hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(9,10,11,0.12)]">
+                <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-mono text-xs font-black text-bronze">{service.index}</span>
+                    <span className="border hairline bg-paper px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-neutral-500">{service.meta}</span>
+                  </div>
+                  <h3 className="mt-5 text-lg font-black leading-6 text-ink">{service.label}</h3>
+                  <p className="mt-3 text-sm leading-6 text-neutral-600">{service.description}</p>
+                </div>
+                <span className="mt-5 text-sm font-black text-bronze transition group-hover:text-ink">View Service</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
