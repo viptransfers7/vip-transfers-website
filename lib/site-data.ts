@@ -370,8 +370,8 @@ export const servicePages = {
     points: ["Hourly standby for changing meeting times", "Point-to-point transfers between hotels, offices, venues, and residences", "Discreet waiting and curbside coordination", "Executive sedan, SUV, and premium van options"],
     cta: "Request Seoul Chauffeur",
     secondaryCta: {
-      label: "Discuss a Seoul Schedule",
-      href: "/contact"
+      label: "View VIP Protocol Service",
+      href: "/vip-protocol-transport-korea"
     },
     heroMeta: [
       { label: "Best for", value: "Seoul meetings" },
@@ -393,6 +393,10 @@ export const servicePages = {
         {
           label: "Multi-stop city day",
           copy: "Practical sequencing for Gangnam, Yeouido, Jongno, Yongsan, Seongsu, and other business areas."
+        },
+        {
+          label: "VIP protocol support",
+          copy: "Protocol-aware planning for delegations, high-profile guests, hosted executives, and schedule-sensitive venue handoffs."
         },
         {
           label: "Private evening plans",
@@ -647,6 +651,7 @@ export const seoLinks = [
   ["Incheon Airport Private Transfer", "/incheon-airport-transfer"],
   ["Gimpo Airport Transfer", "/gimpo-airport-transfer"],
   ["Seoul Chauffeur Service", "/seoul-chauffeur-service"],
+  ["VIP Protocol Transport Korea", "/vip-protocol-transport-korea"],
   ["Executive Transportation Korea", "/executive-chauffeur-korea"],
   ["VIP Airport Transfer Korea", "/airport-transfer-seoul"],
   ["Private Tours Korea", "/private-tours-korea"]

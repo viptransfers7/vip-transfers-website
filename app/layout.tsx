@@ -30,6 +30,7 @@ const footerGroups = [
   [
     ["Incheon Airport Transfer", "/incheon-airport-transfer"],
     ["Seoul Chauffeur Service", "/seoul-chauffeur-service"],
+    ["VIP Protocol Transport", "/vip-protocol-transport-korea"],
     ["Corporate Roadshow Korea", "/corporate-roadshow-korea"]
   ],
   [

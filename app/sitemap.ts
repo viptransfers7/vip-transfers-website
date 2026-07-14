@@ -5,7 +5,7 @@ import { privateTours, servicePages, vehicles } from "@/lib/site-data";
 const baseUrl = "https://viptransferskorea.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/booking", "/contact", "/faq", "/fleet", "/track/demo"];
+  const staticRoutes = ["", "/booking", "/contact", "/faq", "/fleet", "/track/demo", "/vip-protocol-transport-korea"];
   const serviceRoutes = Object.keys(servicePages).map((slug) => `/${slug}`);
   const fleetRoutes = vehicles.map((vehicle) => `/fleet/${vehicle.slug}`);
   const tourRoutes = Object.keys(privateTours).map((slug) => `/private-tours/${slug}`);
