@@ -605,15 +605,15 @@ function SeoulServiceHub() {
           </div>
           <div className="mt-9 border-t hairline">
             {seoulServiceRows.map((service) => (
-              <Link key={service.label} href={service.href} className="group grid gap-4 border-b hairline py-5 transition hover:bg-ivory md:grid-cols-[70px_1fr_1.35fr_220px_96px] md:items-center md:px-4">
+              <Link key={service.label} href={service.href} className="group grid gap-4 border-b hairline py-6 transition hover:bg-ivory md:grid-cols-[70px_0.86fr_1.24fr_300px_64px] md:items-center md:px-4">
                 <div className="font-mono text-xs font-black text-bronze">{service.index}</div>
                 <div>
                   <h3 className="text-lg font-black leading-6 text-ink md:text-xl">{service.label}</h3>
                   <div className="mt-2 inline-flex border hairline bg-paper px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-neutral-500">{service.meta}</div>
                 </div>
                 <p className="text-sm leading-6 text-neutral-600">{service.description}</p>
-                <div className="relative min-h-[124px] overflow-hidden bg-fog md:min-h-[96px]">
-                  <Image src={service.image} alt={service.alt} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 220px" />
+                <div className="relative aspect-[16/10] overflow-hidden bg-fog">
+                  <Image src={service.image} alt={service.alt} fill className="object-cover transition duration-300 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 300px" />
                 </div>
                 <span className="text-sm font-black text-bronze transition group-hover:text-ink">View</span>
               </Link>
