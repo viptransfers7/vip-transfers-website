@@ -92,17 +92,17 @@ const fleetRoles = [
 export default function Page() {
   return (
     <main>
-      <section className="section bg-ink text-white">
-        <div className="container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-          <div>
+      <section className="bg-ink px-5 py-14 text-white md:px-12 md:py-16 lg:px-16 lg:py-20 xl:py-24">
+        <div className="mx-auto grid w-full max-w-[1260px] gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(520px,1.05fr)] lg:items-center xl:gap-14">
+          <div className="max-w-[590px]">
             <div className="eyebrow">VIP Protocol Transport Korea</div>
-            <h1 className="serif-title mt-4 max-w-4xl text-[2rem] leading-[1.04] sm:text-4xl md:mt-5 md:text-6xl">
-              Chauffeur coordination for delegations, high-profile guests, and business schedules in Korea.
+            <h1 className="serif-title mt-4 text-[2.35rem] leading-[1.02] sm:text-5xl md:mt-5 lg:text-[3.6rem] xl:text-[4rem]">
+              VIP protocol transport for delegations, high-profile guests, and business events in Korea.
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-6 text-white/70 md:mt-7 md:text-base md:leading-7">
+            <p className="mt-5 max-w-xl text-sm leading-6 text-white/70 md:mt-6 md:text-base md:leading-7">
               Protocol-aware ground transportation for executive meetings, hosted VIP guests, private events, corporate visits, and multi-vehicle movements across Seoul and Korea.
             </p>
-            <div className="mt-7 flex flex-wrap gap-2.5 sm:gap-3 md:mt-9">
+            <div className="mt-7 flex flex-wrap gap-2.5 sm:gap-3">
               <Link href="/contact" className="btn btn-gold">
                 Request VIP Protocol Plan
               </Link>
@@ -110,7 +110,7 @@ export default function Page() {
                 Start Booking
               </Link>
             </div>
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:max-w-[560px]">
               {[
                 ["Best for", "Delegations and VIP guests"],
                 ["Service style", "Protocol-aware coordination"],
@@ -128,11 +128,11 @@ export default function Page() {
       </section>
 
       <section className="section border-b hairline">
-        <div className="container grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
-          <div>
+        <div className="container grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
+          <div className="max-w-[470px]">
             <div className="eyebrow">Selected Experience</div>
-            <h2 className="serif-title mt-3 text-[1.75rem] leading-[1.08] md:mt-4 md:text-5xl">
-              Real-world chauffeur coordination for clients who need more than a ride.
+            <h2 className="serif-title mt-3 text-[1.75rem] leading-[1.08] md:mt-4 md:text-[3.25rem]">
+              Protocol-aware coordination for clients who need more than a ride.
             </h2>
             <p className="mt-4 text-sm leading-6 text-neutral-600 md:mt-5 md:text-base md:leading-7">
               This service is built around timing, staging, privacy, guest handoff, luggage, vehicle selection, and operational control. Public examples may avoid names, faces, logos, or sensitive event details.
@@ -242,8 +242,8 @@ export default function Page() {
 
 function FeaturedVideo() {
   return (
-    <div className="grid gap-4">
-      <div className="overflow-hidden border dark-hairline bg-white/[0.04]">
+    <div className="grid gap-4 lg:justify-self-end">
+      <div className="max-w-[650px] overflow-hidden border dark-hairline bg-white/[0.04] shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
         <div className="relative aspect-video">
           <iframe
             src={`https://www.youtube-nocookie.com/embed/${featuredVideo.videoId}`}
@@ -253,10 +253,10 @@ function FeaturedVideo() {
             allowFullScreen
           />
         </div>
-        <div className="p-5 md:p-6">
+        <div className="p-4 md:p-5">
           <div className="muted-label accent-label">Partner Video</div>
-          <h2 className="mt-3 text-lg font-black text-white md:text-xl">{featuredVideo.title}</h2>
-          <p className="mt-3 text-sm leading-6 text-white/68">{featuredVideo.description}</p>
+          <h2 className="mt-3 text-base font-black leading-6 text-white md:text-lg">{featuredVideo.title}</h2>
+          <p className="mt-2 text-sm leading-6 text-white/68">{featuredVideo.description}</p>
         </div>
       </div>
     </div>
