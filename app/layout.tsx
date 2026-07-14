@@ -47,9 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="bg-ink px-4 py-1.5 text-center text-[9px] font-semibold uppercase leading-4 tracking-[0.1em] text-[#e8dfca] md:py-2 md:text-xs md:tracking-[0.16em]">
           SEOUL AND KOREA PRIVATE CHAUFFEUR SERVICE
         </div>
-        <header className="sticky top-0 z-50 border-b hairline bg-paper/[0.94] px-4 py-2.5 backdrop-blur-xl md:px-8 md:py-3 lg:px-12">
-          <nav className="relative mx-auto flex max-w-[1240px] items-center justify-between gap-3">
-            <Link href="/" className="grid min-w-0 gap-0.5">
+        <header className="sticky top-0 z-50 border-b hairline bg-paper/[0.94] px-3 py-2.5 backdrop-blur-xl md:px-8 md:py-3 lg:px-12">
+          <nav className="relative mx-auto flex max-w-[1240px] items-center justify-between gap-2 md:gap-3">
+            <Link href="/" className="grid min-w-0 flex-1 gap-0.5">
               <strong className="truncate text-xs font-black tracking-[0.06em] sm:text-sm md:text-base md:uppercase md:tracking-[0.2em]">VIP Transfers Korea</strong>
               <span className="hidden text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500 md:block">Private chauffeur service</span>
             </Link>
@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </Link>
               ))}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
               <span className="hidden md:inline-flex">
                 <Link href="/contact" className="btn btn-compact">
                   Contact

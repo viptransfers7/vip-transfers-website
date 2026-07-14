@@ -364,6 +364,7 @@ export const servicePages = {
   },
   "seoul-chauffeur-service": {
     title: "Seoul Chauffeur Service",
+    serviceHub: "seoul",
     eyebrow: "Business Chauffeur Seoul",
     description:
       "Private chauffeur service across Seoul for hotel-to-office transfers, meeting days, dining appointments, and confidential city schedules.",
