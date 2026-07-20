@@ -12,11 +12,43 @@ const trust = [
 ];
 
 const services = [
-  ["Airport Transfers", "Private arrival and departure service for Incheon, Gimpo, Seoul hotels, residences, and venues."],
-  ["Hourly Chauffeur", "A private chauffeur on standby for meetings, shopping, dining, and multi-stop days in Seoul."],
-  ["Corporate Roadshows", "Schedule-sensitive transport for investor meetings, site visits, events, and hosted executives."],
-  ["Delegation Transport", "Premium sedans, SUVs, vans, and Sprinters coordinated for discreet group movement."],
-  ["Private Tours", "Chauffeured Seoul, Nami Island, and custom Korea itineraries for family and VIP guests."]
+  {
+    title: "Airport Transfers",
+    copy: "Private arrival and departure service for Incheon, Gimpo, Seoul hotels, residences, and venues.",
+    href: "/airport-transfer-seoul",
+    meta: "Instant route pricing"
+  },
+  {
+    title: "Hourly Chauffeur",
+    copy: "A private chauffeur on standby for meetings, shopping, dining, and multi-stop days in Seoul.",
+    href: "/seoul-chauffeur-service",
+    meta: "5h / 10h / 12h"
+  },
+  {
+    title: "Corporate Roadshows",
+    copy: "Schedule-sensitive transport for investor meetings, site visits, events, and hosted executives.",
+    href: "/vip-protocol-transport-korea",
+    meta: "Protocol tier"
+  },
+  {
+    title: "Delegation Transport",
+    copy: "Premium sedans, SUVs, vans, and Sprinters coordinated for discreet group movement.",
+    href: "/vip-protocol-transport-korea",
+    meta: "Protocol tier"
+  },
+  {
+    title: "Private Tours",
+    copy: "Chauffeured Seoul, Nami Island, and custom Korea itineraries for family and VIP guests.",
+    href: "/private-tours-korea",
+    meta: "Tour products"
+  }
+];
+
+const selectedExperience = [
+  ["Corporate roadshows", "Multi-stop Seoul meeting days for visiting executives, assistants, and hosted teams."],
+  ["Luxury hotel guest movement", "Private arrivals, dinner transfers, and calm handoffs for concierge-led guests."],
+  ["Agency and DMC support", "Ground transport coordination for international partners managing Korea itineraries."],
+  ["Delegation schedules", "Sedans, SUVs, MPVs, and Sprinters planned around guest profile, luggage, and timing."]
 ];
 
 export default function HomePage() {
@@ -27,9 +59,9 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/88 via-black/78 to-black/94 lg:hidden" />
         <div className="relative z-10 flex flex-col justify-center px-5 py-10 md:px-14 md:py-16 lg:px-20">
           <div className="eyebrow">VIP Transfers Korea</div>
-          <h1 className="serif-title mt-4 max-w-4xl text-[2rem] leading-[1.03] sm:text-5xl md:text-6xl xl:text-7xl">Private chauffeur service for VIP travel in Korea.</h1>
+          <h1 className="serif-title mt-4 max-w-4xl text-[2rem] leading-[1.03] sm:text-5xl md:text-6xl xl:text-7xl">Private chauffeur service in Korea for executives, VIP guests, and hosted delegations.</h1>
           <p className="mt-5 max-w-2xl text-sm leading-6 text-white/74 md:text-lg md:leading-8">
-            Premium airport transfers, executive roadshows, hourly chauffeurs, and private tours for overseas guests moving through Seoul and Korea.
+            Premium airport transfers, protocol-level coordination, hourly chauffeurs, and private tours for overseas guests moving through Seoul and Korea.
           </p>
           <div className="mt-7 flex flex-wrap gap-2.5 sm:gap-3">
             <Link href="/booking" className="btn btn-gold">
@@ -80,17 +112,45 @@ export default function HomePage() {
 
       <section className="section">
         <div className="container">
+          <div className="grid gap-7 border-y hairline py-8 md:grid-cols-[0.9fr_1.1fr] md:items-center md:py-10">
+            <div>
+              <div className="eyebrow">Highest-Touch Coordination Tier</div>
+              <h2 className="serif-title mt-3 max-w-2xl text-[1.85rem] leading-[1.06] md:text-5xl">VIP Protocol for delegations, roadshows, and high-profile guests.</h2>
+            </div>
+            <div>
+              <p className="text-sm leading-6 text-neutral-600 md:text-base md:leading-7">
+                When the schedule needs more than a single ride, the protocol path adds route review, vehicle mix planning, guest handoff notes, timing risk review, and coordinator follow-up before confirmation.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2.5">
+                <Link href="/vip-protocol-transport-korea" className="btn btn-dark">
+                  View VIP Protocol
+                </Link>
+                <Link href="/contact" className="btn btn-white">
+                  Discuss a Protocol Plan
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section pt-0">
+        <div className="container">
           <SectionHeading
             eyebrow="Services"
             title="Built around the way VIP guests actually move in Korea."
             copy="Use the booking flow for standard transfers, or contact the team for roadshows, delegations, multi-day schedules, and custom private itineraries."
           />
           <div className="mt-8 grid gap-4 md:mt-12 md:grid-cols-5">
-            {services.map(([title, copy]) => (
-              <div key={title} className="surface-card p-4 md:p-5">
-                <h3 className="serif-title text-xl md:text-2xl">{title}</h3>
-                <p className="mt-4 text-sm leading-6 text-neutral-600">{copy}</p>
-              </div>
+            {services.map((service) => (
+              <Link key={service.title} href={service.href} className="surface-card group flex min-h-[230px] flex-col justify-between p-4 transition hover:-translate-y-0.5 hover:shadow-quiet md:p-5">
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-bronze">{service.meta}</div>
+                  <h3 className="serif-title mt-3 text-xl md:text-2xl">{service.title}</h3>
+                  <p className="mt-4 text-sm leading-6 text-neutral-600">{service.copy}</p>
+                </div>
+                <span className="mt-5 text-sm font-black text-bronze transition group-hover:text-ink">View Service</span>
+              </Link>
             ))}
           </div>
         </div>
@@ -147,17 +207,12 @@ export default function HomePage() {
       <section className="section">
         <div className="container grid gap-8 md:grid-cols-[0.8fr_1.2fr]">
           <SectionHeading
-            eyebrow="Trust Signals"
-            title="What guests value most."
-            copy="Clear airport pickup, quiet vehicles, discreet chauffeurs, and careful coordination for schedule-sensitive travel in Korea."
+            eyebrow="Selected Experience"
+            title="Real operating situations, presented without client names."
+            copy="Many VIP and corporate movements require discretion, so public examples avoid names, logos, faces, and sensitive event details."
           />
           <div className="grid gap-4 md:grid-cols-2">
-            {[
-              ["Executive arrivals", "Name-sign pickup, flight-aware timing, and calm handoff after long-haul flights."],
-              ["Business days", "Hourly standby and multi-stop routing for Seoul meetings and site visits."],
-              ["Delegation movement", "Vehicle-class planning for groups that need a polished, unified arrival."],
-              ["Private travel", "Comfortable transfers and chauffeured tours for families, guests, and VIP travelers."]
-            ].map(([title, copy]) => (
+            {selectedExperience.map(([title, copy]) => (
               <div key={title} className="surface-card p-5">
                 <div className="muted-label accent-label">{title}</div>
                 <p className="mt-4 text-sm leading-6 text-neutral-600">{copy}</p>

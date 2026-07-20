@@ -561,12 +561,12 @@ function SeoulServiceHub() {
       <section className="overflow-hidden bg-ink px-5 py-12 text-white md:px-12 md:py-16 lg:px-16">
         <div className="mx-auto grid w-full max-w-[1260px] gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
           <div className="min-w-0">
-            <div className="eyebrow">Premium Tier</div>
+            <div className="eyebrow">Highest-Touch Coordination Tier</div>
             <h2 className="serif-title mt-4 text-[1.8rem] leading-[1.04] sm:text-[2rem] md:text-5xl">
-              VIP Protocol Coordination for delegations and high-profile guests.
+              VIP Protocol Coordination for delegations, roadshows, and high-profile guests.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/68 md:text-base md:leading-7">
-              A higher-touch coordination path for hosted executives, delegation movement, private events, venue handoffs, and multi-vehicle schedules where timing and discretion matter more than a simple ride.
+              A protocol-level coordination path for hosted executives, delegation movement, private events, venue handoffs, and multi-vehicle schedules where timing, privacy, and operational control matter.
             </p>
             <div className="mt-7 grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <Link href="/vip-protocol-transport-korea" className="btn btn-gold w-full sm:w-auto">

@@ -6,7 +6,9 @@ export function CustomQuoteNotice({ reason }: { reason?: string }) {
       <p className="mt-3 text-sm leading-6 text-neutral-700">
         {reason || "This route requires a custom quote. Our team will confirm availability and pricing shortly."}
       </p>
-      <p className="mt-2 text-xs font-bold uppercase tracking-[0.12em] text-neutral-500">This is a quote request. Your reservation is not confirmed until payment is completed.</p>
+      <p className="mt-3 border-t border-[#dfd0b5] pt-3 text-sm font-semibold leading-6 text-neutral-700">
+        This is a quote request, not a confirmed reservation. A coordinator will review availability, routing, vehicle fit, and final pricing before payment.
+      </p>
     </div>
   );
 }

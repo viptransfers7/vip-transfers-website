@@ -95,12 +95,12 @@ export default function Page() {
       <section className="bg-ink px-5 py-14 text-white md:px-12 md:py-16 lg:px-16 lg:py-20 xl:py-24">
         <div className="mx-auto grid w-full max-w-[1260px] gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(520px,1.05fr)] lg:items-center xl:gap-14">
           <div className="max-w-[590px]">
-            <div className="eyebrow">VIP Protocol Transport Korea</div>
+            <div className="eyebrow">Highest-Touch Coordination Tier</div>
             <h1 className="serif-title mt-4 text-[2.35rem] leading-[1.02] sm:text-5xl md:mt-5 lg:text-[3.6rem] xl:text-[4rem]">
-              VIP protocol transport for delegations, high-profile guests, and business events in Korea.
+              VIP protocol chauffeur coordination for delegations, high-profile guests, and business events in Korea.
             </h1>
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/70 md:mt-6 md:text-base md:leading-7">
-              Protocol-aware ground transportation for executive meetings, hosted VIP guests, private events, corporate visits, and multi-vehicle movements across Seoul and Korea.
+              A higher-touch planning path for executive meetings, hosted VIP guests, private events, corporate visits, and multi-vehicle movements where timing, privacy, and handoff control matter.
             </p>
             <div className="mt-7 flex flex-wrap gap-2.5 sm:gap-3">
               <Link href="/contact" className="btn btn-gold">
@@ -132,10 +132,10 @@ export default function Page() {
           <div className="max-w-[470px]">
             <div className="eyebrow">Selected Experience</div>
             <h2 className="serif-title mt-3 text-[1.75rem] leading-[1.08] md:mt-4 md:text-[3.25rem]">
-              Protocol-aware coordination for clients who need more than a ride.
+              Protocol-level coordination for clients who need more than a ride.
             </h2>
             <p className="mt-4 text-sm leading-6 text-neutral-600 md:mt-5 md:text-base md:leading-7">
-              This service is built around timing, staging, privacy, guest handoff, luggage, vehicle selection, and operational control. Public examples may avoid names, faces, logos, or sensitive event details.
+              This service is built around timing, staging, privacy, guest handoff, luggage, vehicle selection, and operational control. Public examples avoid names, faces, logos, and sensitive event details when discretion is required.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
